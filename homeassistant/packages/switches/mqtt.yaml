@@ -1,0 +1,11 @@
+# Dummy switches for now (not used)
+switch:
+  - platform: mqtt
+    name: pierre_lamp
+    command_topic: cmnd/pierre_lampa/power
+    state_topic: stat/pierre_lampa/POWER
+  - platform: mqtt
+    name: mailbox
+    command_topic: sensor/mailBox
+    state_topic: sensor/mailBox
+    optimistic: true

@@ -1,0 +1,23 @@
+sensor:
+  - platform: mqtt
+    state_topic: home-assistant/garage/temperature
+    name: Garage Temperature
+    unit_of_measurement: '°C'
+  - platform: mqtt
+    state_topic: home-assistant/garage/humidity
+    name: Garage Humidity
+    unit_of_measurement: '%'
+
+cover:
+  - platform: mqtt
+    name: Garageporten
+    state_topic: home-assistant/garage/port/state
+    command_topic: home-assistant/garage/port/set
+    payload_open: OPEN
+    payload_close: CLOSE
+    payload_stop: OPEN
+    state_open: OPEN
+    state_closed: CLOSED
+    optimistic: false
+    qos: 0
+    retain: false

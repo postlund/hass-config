@@ -1,0 +1,14 @@
+homeassistant:
+  customize:
+    switch.telldus_tzwp100_plugin_switch_switch_2_0:
+      friendly_name: Living room balls
+    switch.telldus_tzwp100_plugin_switch_switch_3_0:
+      friendly_name: Mirror
+    switch.telldus_tzwp100_plugin_switch_switch_4_0:
+      friendly_name: Living room stars
+    switch.telldus_tzwp100_plugin_switch_switch_5_0:
+      friendly_name: Entrance
+    switch.telldus_tzwp100_plugin_switch_switch_6_0:
+      friendly_name: Dining room locker
+    switch.telldus_tzwp100_plugin_switch_switch_7_0:
+      friendly_name: Dining room vase

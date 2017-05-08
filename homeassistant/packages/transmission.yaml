@@ -1,0 +1,20 @@
+homeassistant:
+  customize:
+    sensor.transmission_down_speed:
+      icon: mdi:download
+    sensor.transmission_up_speed:
+      icon: mdi:upload
+    sensor.transmission_status:
+      icon: mdi:motorbike
+
+sensor:
+  - platform: transmission
+    name: Transmission
+    host: !secret transmission_host
+    port: !secret transmission_port
+    username: !secret transmission_user
+    password: !secret transmission_password
+    monitored_variables:
+      - 'current_status'
+      - 'download_speed'
+      - 'upload_speed'

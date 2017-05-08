@@ -1,0 +1,13 @@
+group:
+
+  bedroom:
+    name: Bedroom
+    entities:
+      - sensor.sovrum_temperature
+      - switch.fnster_sovrum_3
+      - binary_sensor.bedroom_sensor
+
+  guest_rooms:
+    name: Guest rooms
+    entities:
+      - switch.gstrum_fnster_6

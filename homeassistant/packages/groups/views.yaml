@@ -1,0 +1,68 @@
+group:
+
+  default_view:
+    view: yes
+    icon: mdi:home
+    entities:
+      - binary_sensor.kitchen_motion
+      - group.outdoor
+      - media_player.apple_tv
+      - media_player.kok
+      - camera.raspberry_pi_camera
+
+  downstairs:
+    name: Downstairs
+    view: yes
+    icon: mdi:arrow-down
+    entities:
+      - group.entrance
+      - group.living_room
+      - group.kitchen
+      - group.basement
+      - group.garage
+      - group.dining_room
+      - group.office
+
+  upstairs:
+    name: Upstairs
+    view: yes
+    icon: mdi:arrow-up
+    entities:
+      - group.bedroom
+      - group.guest_rooms
+
+  people_view:
+    name: People
+    view: yes
+    icon: mdi:face
+    entities:
+      - group.people_devices
+
+  travel_view:
+    name: Travel
+    view: yes
+    icon: mdi:car
+    entities:
+      - group.pierre_travel
+
+  monitoring:
+    name: Monitoring
+    view: yes
+    icon: mdi:monitor
+    entities:
+      - group.server
+      - group.network
+      - group.processes
+      - group.hardware
+
+  misc_config:
+    name: Configuration
+    view: yes
+    icon: mdi:wrench
+    entities:
+      - group.all_automations
+      - group.all_scripts
+      - svtplay_dl.link
+      - plex.section
+      - input_select.log_level
+

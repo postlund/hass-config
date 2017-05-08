@@ -1,0 +1,12 @@
+group:
+
+  outdoor:
+    name: Today
+    entities:
+      - sun.sun
+      - sensor.date__time
+      - sensor.yr_humidity
+      - sensor.yr_symbol
+      - sensor.yr_temperature
+      - sensor.yr_wind_speed
+      - sensor.ute_temperature

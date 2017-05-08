@@ -1,0 +1,47 @@
+input_boolean:
+  sonos_run_today:
+    name: Sonos automation has run today
+    initial: off
+
+automation:
+  - alias: Reset sonos_run_today
+    trigger:
+      platform: time
+      after: '02:00:00'
+    action:
+      service: input_boolean.turn_off
+      entity_id: input_boolean.sonos_run_today
+
+  - alias: Turn on Sonos when someone comes home from work
+    trigger:
+      platform: state
+      entity_id: binary_sensor.kitchen_sensor
+      from: 'off'
+    condition:
+      - condition: state
+        entity_id: input_boolean.sonos_run_today
+        state: 'off'
+      - condition: state
+        entity_id: group.family
+        state: home
+      - condition: time
+        weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+        - sat
+        - sun
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.sonos_run_today
+      - service: script.sonos_say
+        data:
+          sonos_entity: media_player.kok
+          message: Välkommen hem! Hoppas att dagen har varit bra.
+          delay: '00:00:05'
+          volume: 0.6
+      - delay: '00:00:07'
+      - service: media_player.media_play
+        entity_id: media_player.kok

@@ -1,0 +1,6 @@
+zone:
+  - name: Pierre workplace
+    latitude: !secret zone_pierre_workplace_lat
+    longitude: !secret zone_pierre_workplace_lon
+    radius: 150
+    icon: mdi:worker

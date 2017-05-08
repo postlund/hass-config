@@ -1,0 +1,27 @@
+homeassistant:
+  customize:
+    sensor.speedtest_download:
+      icon: mdi:download
+    sensor.speedtest_upload:
+      icon: mdi:upload
+    sensor.speedtest_ping:
+      icon: mdi:timer
+
+sensor:
+  - platform: speedtest
+    minute: 30
+    hour:
+      - 0
+      - 6
+      - 12
+      - 18
+    monitored_conditions:
+      - ping
+      - download
+      - upload
+
+script:
+  perform_speedtest:
+    alias: Force speedtest
+    sequence:
+      - service: sensor.update_speedtest

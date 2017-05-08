@@ -1,0 +1,100 @@
+homeassistant:
+  name: !secret hass_name
+  latitude: !secret hass_latitude
+  longitude: !secret hass_longitude
+  elevation: !secret hass_elevation
+  unit_system: metric
+  time_zone: Europe/Stockholm
+
+  packages: !include_dir_named packages
+
+logbook:
+  exclude:
+    entities:
+      - sensor.time
+      - sensor.date
+    domains:
+      - sun
+
+ios:
+config:
+frontend:
+conversation:
+history:
+recorder:
+  purge_days: 3
+sun:
+http:
+  server_port: 8123
+  ip_ban_enabled: true
+  login_attempts_threshold: 15
+  base_url: !secret hass_base_url
+  api_password: !secret http_password
+  ssl_certificate: !secret hass_ssl_certificate
+  ssl_key: !secret hass_ssl_key
+
+zwave:
+    usb_path: /dev/ttyACM1
+    device_config: !include zwave_device_config.yaml
+    config_path: /home/homeassistant/.homeassistant/config
+
+device_tracker:
+  - platform: nmap_tracker
+    hosts: !secret nmap_hosts
+    home_interval: 10
+    exclude:
+      - !secret pierre_iphone_address
+
+google:
+  client_id: !secret google_client_id
+  client_secret: !secret google_client_secret
+
+notify:
+  - platform: pushbullet
+    api_key: !secret pushbullet_api_key
+
+sensor:
+  - platform: yr
+    monitored_conditions:
+      - temperature
+      - symbol
+      - windSpeed
+      - humidity
+
+switch:
+  - platform: broadlink
+    host: !secret broadlink_host
+    mac: !secret broadlink_mac
+
+media_player:
+  - platform: apple_tv
+    host: !secret atv_ip
+    login_id: !secret atv_login_id
+
+tts:
+  - platform: google
+
+tellduslive:
+  public_key: !secret telldus_public_key
+  private_key: !secret telldus_private_key
+  token: !secret telldus_token
+  token_secret: !secret telldus_token_secret
+
+mqtt:
+  broker: !secret mqtt_host
+  port: !secret mqtt_port
+  client_id: !secret mqtt_client_id
+  keepalive: 60
+  username: !secret mqtt_user
+  password: !secret mqtt_password
+
+emulated_hue:
+  type: google_home
+  listen_port: 80
+  host_ip: !secret hass_ip
+  expose_by_default: true
+  exposed_domains:
+    - switch
+    - media_player
+    - script
+

@@ -1,0 +1,40 @@
+automation:
+  - alias: Process down
+    trigger:
+      platform: state
+      entity_id:
+        - sensor.process_mosquitto
+        - sensor.process_influxd
+        - sensor.process_homebridge
+        - sensor.process_forkeddappd
+    action:
+      service: notify.notify
+      data_template:
+        message: >
+          {{ trigger.entity_id.split('.')[1] }} is {{ trigger.to_state.state.lower() }}
+
+sensor:
+  - platform: systemmonitor
+    resources:
+    - type: disk_use_percent
+      arg: /
+    - type: memory_free
+    - type: processor_use
+    - type: process
+      arg: mosquitto
+    - type: process
+      arg: influxd
+    - type: process
+      arg: homebridge
+    - type: process
+      arg: forked-daapd
+  - platform: time_date
+    display_options:
+    - 'date_time'
+  - platform: dnsip
+
+script:
+  restart_hass:
+    alias: Restart Home Assistant
+    sequence:
+      - service: homeassistant.restart

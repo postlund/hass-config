@@ -1,0 +1,16 @@
+*~
+.HA_VERSION
+.google.token
+OZW_Log.txt
+config
+deps/
+google_calendars.yaml
+home-assistant_v2.db
+hosts.json
+ios.conf
+known_devices.yaml
+pyozw.sqlite
+secrets.yaml
+tts/
+zwcfg_*.xml
+zwscene.xml
