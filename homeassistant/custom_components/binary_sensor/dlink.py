@@ -38,6 +38,7 @@ class HNAPClient:
         self.password = password
         self.logged_in = False
         self.loop = loop or asyncio.get_event_loop()
+        self.actions = None
         self._private_key = None
         self._cookie = None
         self._auth_token = None
@@ -69,10 +70,21 @@ class HNAPClient:
             if str(resp.LoginResult).lower() != 'success':
                 raise AuthenticationError('Incorrect username or password')
 
+            if not self.actions:
+                self.actions = yield from self.device_actions()
+
         except xml.parsers.expat.ExpatError:
             raise AuthenticationError('Bad response from device')
 
         self.logged_in = True
+
+    @asyncio.coroutine
+    def device_actions(self):
+        def _extract(action):
+            url = str(action)
+            return url[url.rfind('/')+1:]
+        actions = yield from self.call('GetDeviceSettings')
+        return list(map(_extract, actions.SOAPActions.children()))
 
     @asyncio.coroutine
     def call(self, method, *args, **kwargs):
@@ -160,19 +172,25 @@ class MotionSensor:
         log_list = resp.MotionDetectorLogList
         return datetime.fromtimestamp(float(log_list[0].TimeStamp))
 
-
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
 
     import sys
     address = sys.argv[1]
     pin = sys.argv[2]
+    cmd = sys.argv[3]
 
     @asyncio.coroutine
     def _print_latest_motion():
         client = HNAPClient(address, 'Admin', pin, loop=loop)
         motion = MotionSensor(client)
-        latest = yield from motion.latest_trigger()
-        print("Latest time: " + str(latest))
+        yield from client.login()
+
+        if cmd == 'latest_motion':
+            latest = yield from motion.latest_trigger()
+            print('Latest time: ' + str(latest))
+        elif cmd == 'actions':
+            print('Supported actions:')
+            print('\n'.join(client.actions))
 
     loop.run_until_complete(_print_latest_motion())
