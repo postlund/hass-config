@@ -19,7 +19,7 @@ automation:
           message: >
             New device:
             {{trigger.event.data.host_name}}
-            ({{trigger.event.data.entity_id}})
+            {{trigger.event.data.entity_id}}
           title: System Notification
 
   # - platform: command_line
