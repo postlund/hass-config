@@ -25,6 +25,7 @@ automation:
         entity_id: group.family
         state: home
       - condition: time
+        after: '15:00:00'
         weekday:
         - mon
         - tue
