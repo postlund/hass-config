@@ -1,6 +1,0 @@
-media_player:
-  - platform: plex
-
-# Custom component
-plex:
-  server: !secret plex_server

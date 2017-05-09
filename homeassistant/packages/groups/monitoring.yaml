@@ -54,7 +54,7 @@ group:
       - sensor.process_homebridge
       - sensor.process_forkeddaapd
 
-hardware:
+  hardware:
     name: Hardware
     entities:
       - device_tracker.broadlink

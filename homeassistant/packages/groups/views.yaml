@@ -4,11 +4,13 @@ group:
     view: yes
     icon: mdi:home
     entities:
-      - binary_sensor.kitchen_motion
+      - group.movies
+      - group.tv_shows
       - group.outdoor
       - media_player.apple_tv
       - media_player.kok
       - camera.raspberry_pi_camera
+      - group.links
 
   downstairs:
     name: Downstairs
