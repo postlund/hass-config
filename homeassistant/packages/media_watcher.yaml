@@ -1,3 +1,26 @@
+automation:
+  - alias: New TV Show Added
+    trigger:
+      - platform: state
+        entity_id:
+          - !secret media_watcher_tv1_sensor
+          - !secret media_watcher_tv2_sensor
+          - !secret media_watcher_tv3_sensor
+          - !secret media_watcher_tv4_sensor
+          - !secret media_watcher_tv5_sensor
+          - !secret media_watcher_tv6_sensor
+          - !secret media_watcher_tv7_sensor
+          - !secret media_watcher_tv8_sensor
+    condition:
+      - condition: template
+        value_template: '{{ trigger.from_state.state|int < trigger.to_state.state|int }}'
+    action:
+      - service: notify.ios_pierres_iphone
+        data_template:
+          message: >
+            New episode of {{ states.sensor[trigger.entity_id.split('.')[1]].name }} is out!
+          title: New episode added
+
 media_watcher:
   host: !secret media_watcher_server
   tv_shows:
@@ -6,6 +29,9 @@ media_watcher:
     - !secret media_watcher_tv3_name
     - !secret media_watcher_tv4_name
     - !secret media_watcher_tv5_name
+    - !secret media_watcher_tv6_name
+    - !secret media_watcher_tv7_name
+    - !secret media_watcher_tv8_name
   sections:
     - Movies
 

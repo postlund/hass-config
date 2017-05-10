@@ -28,6 +28,9 @@ group:
       - !secret media_watcher_tv3_sensor
       - !secret media_watcher_tv4_sensor
       - !secret media_watcher_tv5_sensor
+      - !secret media_watcher_tv6_sensor
+      - !secret media_watcher_tv7_sensor
+      - !secret media_watcher_tv8_sensor
 
   links:
     name: Links

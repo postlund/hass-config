@@ -1,5 +1,6 @@
 # TODO: show() blocks the event loop
 import asyncio
+import logging
 
 from homeassistant.util import slugify
 from homeassistant.components.sensor import ENTITY_ID_FORMAT
@@ -8,6 +9,8 @@ from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.dispatcher import (
     async_dispatcher_send, async_dispatcher_connect)
 from custom_components.media_watcher import SIGNAL_UPDATE_DATA
+
+_LOGGER = logging.getLogger(__name__)
 
 DEPENDENCIES = ['media_watcher']
 
@@ -42,19 +45,25 @@ class TvSeriesSensor(Entity):
     @asyncio.coroutine
     def async_added_to_hass(self):
         """Register update dispatcher."""
-        self._no_unwatched = len(self.watcher.searches[self.title])
+        self._update_watched()
 
         @callback
         def async_update():
             """Update callback."""
             unwatched = len(self.watcher.searches[self.title])
-
             if unwatched != self._no_unwatched:
-                self._no_unwatched = unwatched
+                self._update_watched()
                 self.hass.async_add_job(self.async_update_ha_state(True))
 
         async_dispatcher_connect(
             self.hass, SIGNAL_UPDATE_DATA, async_update)
+
+    @callback
+    def _update_watched(self):
+        unwatched = self.watcher.searches[self.title]
+        self._no_unwatched = len(unwatched)
+        self._episodes = list(map(lambda x: 's{0:02}e{1:02}'.format(
+            x.seasonNumber, x.index), unwatched))
 
     @property
     def name(self):
@@ -86,6 +95,12 @@ class TvSeriesSensor(Entity):
         """Return the default icon of the sensor."""
         return 'mdi:television'
 
+    @property
+    def device_state_attributes(self):
+        """Return the state attributes."""
+        return {
+            'episodes': self._episodes
+            }
 
 class SectionSensor(Entity):
 
