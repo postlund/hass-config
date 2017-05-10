@@ -1,3 +1,14 @@
+homeassistant:
+  customize:
+    group.basic:
+      order: 1
+    group.tv_shows:
+      order: 2
+    group.movies:
+      order: 3
+    group.links:
+      order: 4
+
 group:
 
   outdoor:
@@ -9,7 +20,13 @@ group:
       - sensor.yr_symbol
       - sensor.yr_temperature
       - sensor.yr_wind_speed
-      - sensor.ute_temperature
+
+  basic:
+    name: Basic Controls
+    entities:
+      - switch.downstair_lights
+      - switch.sonos_player
+      - switch.television
 
   movies:
     name: Movies

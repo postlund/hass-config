@@ -4,13 +4,18 @@ group:
     view: yes
     icon: mdi:home
     entities:
-      - group.movies
+      - sensor.vardagsrum_temperature
+      - sensor.sovrum_temperature
+      - sensor.pannrum_temperature
+      - sensor.ute_temperature
+      - switch.downstair_lights
+      - group.basic
       - group.tv_shows
-      - group.outdoor
+      - group.movies
+      #- media_player.kok
       - media_player.apple_tv
-      - media_player.kok
-      - camera.raspberry_pi_camera
       - group.links
+      #- camera.raspberry_pi_camera
 
   downstairs:
     name: Downstairs

@@ -5,6 +5,19 @@ homeassistant:
     media_player.kok:
       emulated_hue_name: Sonos
 
+switch:
+  - platform: template
+    switches:
+      sonos_player:
+        friendly_name: Sonos
+        value_template: "{{ is_state('media_player.kok', 'playing') }}"
+        turn_on:
+          service: media_player.media_play
+          entity_id: media_player.kok
+        turn_off:
+          service: media_player.media_pause
+          entity_id: media_player.kok
+
 media_player:
   - platform: sonos
 

@@ -1,0 +1,16 @@
+homeassistant:
+  customize:
+    sensor.pannrum_temperature:
+      friendly_name: Basement
+    sensor.sovrum_temperature:
+      friendly_name: Bedroom
+    sensor.ute_temperature:
+      friendly_name: Outside
+    sensor.vardagsrum_temperature:
+      friendly_name: Living Room
+
+tellduslive:
+  public_key: !secret telldus_public_key
+  private_key: !secret telldus_private_key
+  token: !secret telldus_token
+  token_secret: !secret telldus_token_secret

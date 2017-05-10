@@ -82,12 +82,6 @@ media_player:
 tts:
   - platform: google
 
-tellduslive:
-  public_key: !secret telldus_public_key
-  private_key: !secret telldus_private_key
-  token: !secret telldus_token
-  token_secret: !secret telldus_token_secret
-
 mqtt:
   broker: !secret mqtt_host
   port: !secret mqtt_port
