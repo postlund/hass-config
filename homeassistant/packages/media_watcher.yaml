@@ -15,7 +15,7 @@ automation:
       - condition: template
         value_template: '{{ trigger.from_state.state|int < trigger.to_state.state|int }}'
     action:
-      - service: notify.ios_pierres_iphone
+      - service: notify.all_people
         data_template:
           message: >
             New episode of {{ states.sensor[trigger.entity_id.split('.')[1]].name }} is out!

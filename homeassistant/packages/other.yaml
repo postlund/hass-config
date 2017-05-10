@@ -4,7 +4,7 @@ automation:
       platform: homeassistant
       event: start
     action:
-      service: script.system_message
+      service: notify.system
       data_template:
         message: 'Home Assistant has started (IP: {{ states.sensor.myipopendnscom.state }})'
         title: System Notification
@@ -14,7 +14,7 @@ automation:
       platform: event
       event_type: device_tracker_new_device
     action:
-      - service: script.system_message
+      - service: notify.system
         data_template:
           message: >
             New device:
@@ -25,12 +25,3 @@ automation:
   # - platform: command_line
   #   name: HomeKit code
   #   command: "grep pin /var/homebridge/config.json | cut -f 4 -d '\"'"
-
-script:
-  system_message:
-    alias: Notify a system event
-    sequence:
-      - service: notify.ios_pierres_iphone
-        data_template:
-          title: '{{ title }}'
-          message: '{{ message }}'

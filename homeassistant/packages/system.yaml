@@ -8,10 +8,11 @@ automation:
         - sensor.process_homebridge
         - sensor.process_forkeddappd
     action:
-      service: notify.notify
+      service: notify.system
       data_template:
         message: >
           {{ trigger.entity_id.split('.')[1] }} is {{ trigger.to_state.state.lower() }}
+        title: System Notification
 
 sensor:
   - platform: systemmonitor

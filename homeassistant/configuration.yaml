@@ -52,8 +52,14 @@ google:
   client_secret: !secret google_client_secret
 
 notify:
-  - platform: pushbullet
-    api_key: !secret pushbullet_api_key
+  - name: all_people
+    platform: group
+    services:
+      - service: ios_pierres_iphone
+  - name: system
+    platform: group
+    services:
+      - service: ios_pierres_iphone
 
 sensor:
   - platform: yr
