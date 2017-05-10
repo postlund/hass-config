@@ -1,18 +1,37 @@
-automation:
-  - alias: Turn on lights at sunset
-    trigger:
-      platform: sun
-      event: sunset
-      offset: '00:20:00'
-    action:
-      - service: switch.turn_on
-        entity_id: group.downstair_lights
+# Turns on bedroom light if:
+# - Someone is home
+# - Motion is detected in bedroom
+# - Time is after 21:30
+# - Only once per day
+input_boolean:
+  pierre_bedroom_run_today:
+    name: Turn on Pierres bedroom lamp automation has run today
 
-  - alias: Turn off lights in the morning
+automation:
+  - alias: Reset pierre_bedroom_run_today
     trigger:
-      platform: sun
-      event: sunrise
-      offset: '02:00:00'
+      platform: time
+      after: '08:00:00'
     action:
-      - service: switch.turn_ff
-        entity_id: group.downstair_lights
+      service: input_boolean.turn_off
+      entity_id: input_boolean.pierre_bedroom_run_today
+
+  - alias: Turn on bedroom lamp when someone enters the room
+    trigger:
+      platform: state
+      entity_id: binary_sensor.bedroom_sensor
+      from: 'off'
+    condition:
+      - condition: state
+        entity_id: input_boolean.pierre_bedroom_run_today
+        state: 'off'
+      - condition: state
+        entity_id: group.family
+        state: home
+      - condition: time
+        after: '21:30:00'
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.pierre_bedroom_run_today
+      - service: switch.turn_on
+        entity_id: switch.pierre_bedroom

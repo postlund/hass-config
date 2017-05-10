@@ -3,8 +3,8 @@ group:
   bedroom:
     name: Bedroom
     entities:
+      - switch.pierre_bedroom
       - sensor.sovrum_temperature
-      - switch.fnster_sovrum_3
       - binary_sensor.bedroom_sensor
 
   guest_rooms:
