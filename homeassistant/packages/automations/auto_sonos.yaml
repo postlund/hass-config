@@ -1,7 +1,6 @@
 input_boolean:
   sonos_run_today:
     name: Sonos automation has run today
-    initial: off
 
 automation:
   - alias: Reset sonos_run_today
