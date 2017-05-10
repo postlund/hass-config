@@ -16,6 +16,8 @@ logbook:
     domains:
       - sun
 
+logger:
+  default: warn
 ios:
 config:
 frontend:
