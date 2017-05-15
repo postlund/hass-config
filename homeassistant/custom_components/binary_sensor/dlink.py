@@ -87,6 +87,11 @@ class HNAPClient:
         return list(map(_extract, actions.SOAPActions.children()))
 
     @asyncio.coroutine
+    def soap_actions(self, module_id):
+        return (yield from self.call(
+            'GetModuleSOAPActions', ModuleID=module_id))
+
+    @asyncio.coroutine
     def call(self, method, *args, **kwargs):
         """Call an NHAP method (async)."""
         def _call_method():
@@ -158,19 +163,38 @@ class HNAPClient:
 class MotionSensor:
     """Wrapper class for a motion sensor."""
 
-    def __init__(self, client):
+    def __init__(self, client, module_id=1):
         """Initialize a new MotionSensor instance."""
         self.client = client
+        self.module_id = module_id
+        self._soap_actions = None
 
     @asyncio.coroutine
     def latest_trigger(self):
         """Get latest trigger time from sensor."""
-        resp = yield from self.client.call(
-            'GetMotionDetectorLogs', ModuleID=1, MaxCount=1,
-            PageOffset=1, StartTime=0, EndTime='All')
+        if not self._soap_actions:
+            yield from self._cache_soap_actions()
 
-        log_list = resp.MotionDetectorLogList
-        return datetime.fromtimestamp(float(log_list[0].TimeStamp))
+        detect_time = None
+        if 'GetLatestDetection' in self._soap_actions:
+            resp = yield from self.client.call(
+                'GetLatestDetection', ModuleID=self.module_id)
+            detect_time = float(resp.LatestDetectTime)
+        else:
+            resp = yield from self.client.call(
+                'GetMotionDetectorLogs', ModuleID=self.module_id, MaxCount=1,
+                PageOffset=1, StartTime=0, EndTime='All')
+            detect_time = float(resp.MotionDetectorLogList[0].TimeStamp)
+
+        return datetime.fromtimestamp(detect_time)
+
+    @asyncio.coroutine
+    def _cache_soap_actions(self):
+        resp = yield from self.client.soap_actions(self.module_id)
+        actions = filter(lambda x: x.get_name() == 'Action',
+                         resp.SOAPActions.children())
+        self._soap_actions = list(map(lambda x: str(x), actions))
+
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
