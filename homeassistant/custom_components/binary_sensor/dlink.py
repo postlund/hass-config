@@ -189,12 +189,39 @@ class MotionSensor:
         return datetime.fromtimestamp(detect_time)
 
     @asyncio.coroutine
+    def module_actions(self):
+        resp = yield from self.client.call(
+            'GetModuleSOAPActions', ModuleID=self.module_id)
+        print(resp)
+
+    @asyncio.coroutine
+    def profile(self):
+        resp = yield from self.client.call(
+            'GetModuleProfile', ModuleID=self.module_id)
+        print(resp)
+
+    @asyncio.coroutine
+    def system_log(self):
+        resp = yield from self.client.call(
+            'GetSystemLogs', MaxCount=100, Tag='All',
+            PageOffset=1, StartTime=0, EndTime='All')
+        print(resp)
+
+    @asyncio.coroutine
     def _cache_soap_actions(self):
         resp = yield from self.client.soap_actions(self.module_id)
         actions = filter(lambda x: x.get_name() == 'Action',
                          resp.SOAPActions.children())
         self._soap_actions = list(map(lambda x: str(x), actions))
 
+    # This is for siren
+    @asyncio.coroutine
+    def sound_play(self, sound_type, volume, duration, controller):
+        resp = yield from self.client.call(
+            'SetSoundPlay', ModuleID=self.module_id,
+            SoundType=sound_type, Volume=volume,
+            Duration=duration, Controller=controller)
+        print(resp)
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
@@ -216,5 +243,14 @@ if __name__ == '__main__':
         elif cmd == 'actions':
             print('Supported actions:')
             print('\n'.join(client.actions))
+        elif cmd == 'system_log':
+            yield from motion.system_log()
+        elif cmd == 'module_actions':
+            yield from motion.module_actions()
+        elif cmd == 'profile':
+            yield from motion.profile()
+        elif cmd == 'sound_play':
+            yield from motion.sound_play(
+                sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7])
 
     loop.run_until_complete(_print_latest_motion())
