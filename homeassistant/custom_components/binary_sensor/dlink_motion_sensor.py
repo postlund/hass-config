@@ -15,6 +15,7 @@ from homeassistant.components.binary_sensor import (
 from homeassistant.const import (
     CONF_NAME, CONF_PASSWORD, CONF_USERNAME, CONF_HOST, CONF_TIMEOUT)
 import homeassistant.helpers.config_validation as cv
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -38,10 +39,16 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 @asyncio.coroutine
 def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
     """Set up the D-Link motion sensor."""
-    from .dlink import HNAPClient, MotionSensor
+    from .dlink_new import HNAPClient, MotionSensor, NanoSOAPClient, ACTION_BASE_URL
+
+    soap = NanoSOAPClient(
+        config.get(CONF_HOST),
+        ACTION_BASE_URL,
+        loop=hass.loop,
+        session=async_get_clientsession(hass))
 
     client = HNAPClient(
-        config.get(CONF_HOST),
+        soap,
         config.get(CONF_USERNAME),
         config.get(CONF_PASSWORD),
         loop=hass.loop)
@@ -82,7 +89,12 @@ class DlinkMotionSensor(BinarySensorDevice):
     @asyncio.coroutine
     def async_update(self):
         """Get the latest data and updates the states."""
-        last_trigger = yield from self._motion_sensor.latest_trigger()
+        try:
+            last_trigger = yield from self._motion_sensor.latest_trigger()
+        except Exception:
+            last_trigger = None
+            _LOGGER.exception('failed to update motion sensor')
+
         if not last_trigger:
             return
 

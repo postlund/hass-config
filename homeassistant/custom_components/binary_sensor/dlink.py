@@ -144,7 +144,7 @@ class HNAPClient:
                 self._auth_token, self._timestamp)
 
         client = SoapClient(
-            'http://{0}/HNAP1'.format(self.address), trace=True,
+            'http://{0}/HNAP1'.format(self.address), trace=False,
             namespace=NAMESPACE,
             action=ACTION_BASE_URL,
             http_headers=headers)
@@ -189,6 +189,19 @@ class MotionSensor:
         return datetime.fromtimestamp(detect_time)
 
     @asyncio.coroutine
+    def loop(self):
+        latest = None
+        while True:
+            try:
+                trigger = yield from self.latest_trigger()
+                if latest != trigger:
+                    print(trigger)
+                    latest = trigger
+            except Exception as ex:
+                print("EXCEPTION: " + str(ex))
+            yield from asyncio.sleep(5)
+
+    @asyncio.coroutine
     def module_actions(self):
         resp = yield from self.client.call(
             'GetModuleSOAPActions', ModuleID=self.module_id)
@@ -205,6 +218,21 @@ class MotionSensor:
         resp = yield from self.client.call(
             'GetSystemLogs', MaxCount=100, Tag='All',
             PageOffset=1, StartTime=0, EndTime='All')
+        print(resp)
+
+    @asyncio.coroutine
+    def firmware_status(self):
+        resp = yield from self.client.call('GetFirmwareStatus')
+        print(resp)
+
+    @asyncio.coroutine
+    def internet_status(self):
+        resp = yield from self.client.call('GetCurrentInternetStatus')
+        print(resp)
+
+    @asyncio.coroutine
+    def internet_settings(self):
+        resp = yield from self.client.call('GetInternetSettings')
         print(resp)
 
     @asyncio.coroutine
@@ -252,5 +280,13 @@ if __name__ == '__main__':
         elif cmd == 'sound_play':
             yield from motion.sound_play(
                 sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7])
+        elif cmd == 'firmware_status':
+            yield from motion.firmware_status()
+        elif cmd == 'internet_status':
+            yield from motion.internet_status()
+        elif cmd == 'internet_settings':
+            yield from motion.internet_settings()
+        elif cmd == 'loop':
+            yield from motion.loop()
 
     loop.run_until_complete(_print_latest_motion())
