@@ -24,11 +24,9 @@ sensor:
     - type: process
       arg: mosquitto
     - type: process
-      arg: influxd
-    - type: process
       arg: homebridge
     - type: process
-      arg: forked-daapd
+      arg: btscand
   - platform: time_date
     display_options:
     - 'date_time'

@@ -44,3 +44,7 @@ script:
             {% else %}
               {{ program }}
             {% endif %}
+      - delay: '00:00:05'  # Conditional wait until video is playing here
+      - service: media_player.media_play
+        data_template:
+          entity_id: '{{ entity_id }}'

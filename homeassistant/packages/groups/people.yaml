@@ -13,7 +13,7 @@ group:
       - device_tracker.pierres_iphone
       - sensor.pierres_iphone_battery_level
       - sensor.pierres_iphone_battery_state
-      - device_tracker.tove_iphone
+      - device_tracker.toves_iphone
       - device_tracker.tove_ipad
       - device_tracker.tove_macbook
       - device_tracker.pierre_macbook
@@ -29,7 +29,7 @@ group:
     name: All people in family
     entities:
       - device_tracker.pierres_iphone
-      - device_tracker.tove_iphone
+      - device_tracker.toves_iphone
 
   pierre_travel:
     name: Pierre Travel Times

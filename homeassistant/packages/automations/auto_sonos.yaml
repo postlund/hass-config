@@ -26,22 +26,16 @@ automation:
       - condition: time
         after: '15:00:00'
         weekday:
-        - mon
-        - tue
-        - wed
-        - thu
         - fri
-        - sat
-        - sun
     action:
       - service: input_boolean.turn_on
         entity_id: input_boolean.sonos_run_today
       - service: script.sonos_say
         data:
           sonos_entity: media_player.kok
-          message: Välkommen hem! Hoppas att dagen har varit bra.
+          message: Det är fredag, dags för lite musik!
           delay: '00:00:05'
-          volume: 0.6
+          volume: 0.5
       - delay: '00:00:07'
       - service: media_player.media_play
         entity_id: media_player.kok

@@ -35,3 +35,21 @@ automation:
         entity_id: input_boolean.pierre_bedroom_run_today
       - service: switch.turn_on
         entity_id: switch.pierre_bedroom
+
+  # TODO: create a scene for "evning lights" and use that instead
+  - alias: Turn on evening lights
+    trigger:
+      - platform: sun
+        event: sunset
+        offset: '00:15:00'
+      - platform: sun
+        event: sunrise
+        offset: '01:00:00'
+    action:
+      service_template: >
+        {% if trigger.event == 'sunset' %}
+          switch.turn_on
+        {% else %}
+          switch.turn_off
+        {% endif %}
+      entity_id: switch.downstair_lights

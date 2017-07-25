@@ -61,6 +61,7 @@ group:
       - group.network
       - group.processes
       - group.hardware
+      - group.bluetooth
 
   misc_config:
     name: Configuration

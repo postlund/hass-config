@@ -1,8 +1,5 @@
-homeassistant:
-  customize:
-    media_player.receiver_zone_2:
-      hidden: true
-
 media_player:
   - platform: yamaha
     name: Receiver
+    zone_ignore:
+      - Zone_2

@@ -4,6 +4,8 @@ homeassistant:
       emulated_hue: false
     media_player.kok:
       emulated_hue_name: Sonos
+    switch.sonos_player:
+      emulated_hue: false
 
 switch:
   - platform: template

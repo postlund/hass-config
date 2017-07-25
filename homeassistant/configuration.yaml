@@ -36,7 +36,7 @@ http:
   ssl_key: !secret hass_ssl_key
 
 zwave:
-    usb_path: /dev/ttyACM1
+    usb_path: /dev/ttyACM0
     device_config: !include zwave_device_config.yaml
     config_path: /home/homeassistant/.homeassistant/config
 
@@ -46,6 +46,7 @@ device_tracker:
     home_interval: 10
     exclude:
       - !secret pierre_iphone_address
+      - !secret tove_iphone_address
 
 google:
   client_id: !secret google_client_id
@@ -56,6 +57,7 @@ notify:
     platform: group
     services:
       - service: ios_pierres_iphone
+      - service: ios_toves_iphone
   - name: system
     platform: group
     services:
@@ -89,6 +91,8 @@ mqtt:
   keepalive: 60
   username: !secret mqtt_user
   password: !secret mqtt_password
+  discovery: true
+  discovery_prefix: !secret mqtt_prefix
 
 emulated_hue:
   type: google_home

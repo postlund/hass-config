@@ -25,3 +25,22 @@ automation:
   # - platform: command_line
   #   name: HomeKit code
   #   command: "grep pin /var/homebridge/config.json | cut -f 4 -d '\"'"
+
+  # - alias: Warn if log file exceeds size
+  #   trigger:
+  #     platform: state
+  #     entity_id: sensor.log_size
+  #   condition:
+  #     - condition: numeric_state
+  #       entity_id: sensor.log_size
+  #       above: 10 # KB
+  #   action:
+  #     - service: notify.system
+  #       data:
+  #         message: Log file is getting rather big
+  #         title: System Message
+
+sensor:
+  - platform: command_line
+    name: Log size
+    command: "ls -s /home/homeassistant/.homeassistant/home-assistant.log | cut -f 1 -d ' '"
