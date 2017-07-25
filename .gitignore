@@ -4,6 +4,7 @@
 __pycache__
 .HA_VERSION
 .google.token
+.ios.conf
 OZW_Log.txt
 config
 deps/

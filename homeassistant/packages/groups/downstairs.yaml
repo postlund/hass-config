@@ -3,32 +3,44 @@ homeassistant:
   customize:
     cover.garageporten:
       homebridge_cover_type: garage_door
+    switch.living_room_balls_switch:
+      friendly_name: Living room balls
+    switch.entrance_mirror_switch:
+      friendly_name: Mirror
+    switch.living_room_stars_switch:
+      friendly_name: Living room stars
+    switch.entrance_unused_switch:
+      friendly_name: Entrance
+    switch.dining_room_locker_switch:
+      friendly_name: Dining room locker
+    switch.dining_room_vase_switch:
+      friendly_name: Dining room vase
 
 group:
 
   downstair_lights:
     name: All lights downstairs
     entities:
-      - switch.telldus_tzwp100_plugin_switch_switch_3_0
-      - switch.telldus_tzwp100_plugin_switch_switch_5_0
-      - switch.telldus_tzwp100_plugin_switch_switch_2_0
-      - switch.telldus_tzwp100_plugin_switch_switch_4_0
-      - switch.telldus_tzwp100_plugin_switch_switch_6_0
-      - switch.telldus_tzwp100_plugin_switch_switch_7_0
+      - switch.entrance_mirror_switch
+      - switch.entrance_unused_switch
+      - switch.living_room_balls_switch
+      - switch.living_room_stars_switch
+      - switch.dining_room_locker_switch
+      - switch.dining_room_vase_switch
 
   entrance:
     name: Entrance
     entities:
-      - switch.telldus_tzwp100_plugin_switch_switch_3_0
-      - switch.telldus_tzwp100_plugin_switch_switch_5_0
+      - switch.entrance_mirror_switch
+      - switch.entrance_unused_switch
 
   living_room:
     name: Living room
     entities:
       - sensor.vardagsrum_temperature
       - media_player.receiver
-      - switch.telldus_tzwp100_plugin_switch_switch_2_0
-      - switch.telldus_tzwp100_plugin_switch_switch_4_0
+      - switch.living_room_balls_switch
+      - switch.living_room_stars_switch
 
   kitchen:
     name: Kitchen
@@ -50,8 +62,8 @@ group:
   dining_room:
     name: Dining room
     entities:
-      - switch.telldus_tzwp100_plugin_switch_switch_6_0
-      - switch.telldus_tzwp100_plugin_switch_switch_7_0
+      - switch.dining_room_locker_switch
+      - switch.dining_room_vase_switch
 
   office:
     name: Office

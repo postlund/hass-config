@@ -76,9 +76,8 @@ switch:
     host: !secret broadlink_host
     mac: !secret broadlink_mac
 
-media_player:
-  - platform: apple_tv
-    host: !secret atv_ip
+apple_tv:
+  - host: !secret atv_ip
     login_id: !secret atv_login_id
 
 tts:

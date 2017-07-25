@@ -6,7 +6,7 @@ automation:
   - alias: Reset sonos_run_today
     trigger:
       platform: time
-      after: '02:00:00'
+      at: '02:00:00'
     action:
       service: input_boolean.turn_off
       entity_id: input_boolean.sonos_run_today
