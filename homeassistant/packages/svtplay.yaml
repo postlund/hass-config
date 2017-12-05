@@ -9,6 +9,7 @@ script:
     alias: Morning news
     sequence:
       - service: script.tv_turn_on
+      - delay: '00:00:15'
       - service: script.svtplay_play
         data:
           entity_id: media_player.apple_tv
@@ -44,7 +45,7 @@ script:
             {% else %}
               {{ program }}
             {% endif %}
-      - delay: '00:00:05'  # Conditional wait until video is playing here
+      # - delay: '00:00:05'  # Conditional wait until video is playing here
       - service: media_player.media_play
         data_template:
           entity_id: '{{ entity_id }}'

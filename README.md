@@ -12,17 +12,17 @@ Here is the start of my Home Assistant configuration. More details to come...
 
 **Devices and Sensors:**
 * Amazon Echo Dot Gen 2
-* Apple Devices - iPhone 6, iPhone 6+, iPhone 7+, iPad Mini 2, Apple TV 3rd gen
+* Apple Devices - iPhone X, Apple TV 4K
 * Benq W100+ Projector _(not configured yet)_
 * Broadlink RM Pro 2
 * D-Link DCH-S150 Motion Sensor
 * Kingping KP200 Screen (unsupported protocol)
 * Homemade garage port controller with temp sensor (MQTT)
 * Panasonic TH50PZ70E
-* Plex Media Server
+* Emby
 * SonOff switch _(not configured yet)_
 * Sonos Play:1
-* Telldus Plug-In Switch
+* Various 433MHz sockets
 * Viking Thermometer (433MHz)
 * Yamaha Receiver
 

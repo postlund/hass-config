@@ -21,19 +21,19 @@ automation:
             New episode of {{ states.sensor[trigger.entity_id.split('.')[1]].name }} is out!
           title: New episode added
 
-media_watcher:
-  host: !secret media_watcher_server
-  tv_shows:
-    - !secret media_watcher_tv1_name
-    - !secret media_watcher_tv2_name
-    - !secret media_watcher_tv3_name
-    - !secret media_watcher_tv4_name
-    - !secret media_watcher_tv5_name
-    - !secret media_watcher_tv6_name
-    - !secret media_watcher_tv7_name
-    - !secret media_watcher_tv8_name
-  sections:
-    - Movies
+# media_watcher:
+#   host: !secret media_watcher_server
+#   tv_shows:
+#     - !secret media_watcher_tv1_name
+#     - !secret media_watcher_tv2_name
+#     - !secret media_watcher_tv3_name
+#     - !secret media_watcher_tv4_name
+#     - !secret media_watcher_tv5_name
+#     - !secret media_watcher_tv6_name
+#     - !secret media_watcher_tv7_name
+#     - !secret media_watcher_tv8_name
+#   sections:
+#     - Movies
 
 # TODO: Will be replaced by media_watcher soon
 plex:

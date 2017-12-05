@@ -10,7 +10,4 @@ homeassistant:
       friendly_name: Living Room
 
 tellduslive:
-  public_key: !secret telldus_public_key
-  private_key: !secret telldus_private_key
-  token: !secret telldus_token
-  token_secret: !secret telldus_token_secret
+  host: !secret telldus_host

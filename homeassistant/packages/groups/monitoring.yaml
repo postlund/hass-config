@@ -33,9 +33,9 @@ group:
     name: Server
     entities:
       - sensor.myipopendnscom
-      - sensor.cpu_use
-      - sensor.ram_free
-      - sensor.disk_use_
+      - sensor.cpu_used
+      - sensor.ram_available
+      - sensor.disk_used_
 
   network:
     name: Network

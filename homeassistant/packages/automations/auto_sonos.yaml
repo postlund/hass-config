@@ -39,3 +39,18 @@ automation:
       - delay: '00:00:07'
       - service: media_player.media_play
         entity_id: media_player.kok
+
+  - alias: Turn off bedroom light when emby plays
+    trigger:
+      platform: state
+      entity_id: media_player.emby__emby_mobile__chrome
+      to: 'playing'
+    condition:
+      - condition: state
+        entity_id: group.family
+        state: home
+      - condition: time
+        after: '21:00:00'
+    action:
+      - service: switch.turn_off
+        entity_id: switch.pierre_bedroom

@@ -12,10 +12,15 @@ group:
       - group.basic
       - group.tv_shows
       - group.movies
-      #- media_player.kok
+      - history_graph.temperatures
+      - group.airplay
+      - media_player.kok
       - media_player.apple_tv
+      - media_player.emby__emby_mobile__chrome
+      #- media_player.hdmi_0
       - group.links
       #- camera.raspberry_pi_camera
+      - binary_sensor.floorplan
 
   downstairs:
     name: Downstairs
@@ -36,7 +41,8 @@ group:
     icon: mdi:arrow-up
     entities:
       - group.bedroom
-      - group.guest_rooms
+      - group.guest_room
+      - group.baby_room
 
   people_view:
     name: People

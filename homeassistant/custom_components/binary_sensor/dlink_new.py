@@ -50,6 +50,7 @@ class HNAPClient:
     @asyncio.coroutine
     def login(self):
         """Authenticate with device and obtain cookie."""
+        _LOGGER.info('Logging into device')
         self.logged_in = False
         resp = yield from self.call(
             'Login', Action='request', Username=self.username,
@@ -99,9 +100,19 @@ class HNAPClient:
         if not self._private_key and method != 'Login':
             yield from self.login()
 
-        # TODO: Handle exceptions here(?)
         self._update_nauth_token(method)
-        return (yield from self.soap().call(method, **kwargs))
+        try:
+            result = yield from self.soap().call(method, **kwargs)
+            if 'ERROR' in result:
+                self._bad_response()
+        except:
+            self._bad_response()
+        return result
+
+    def _bad_response(self):
+        _LOGGER.error('Got an error, resetting private key')
+        self._private_key = None
+        raise Exception('got error response from device')
 
     def _update_nauth_token(self, action):
         """Update NHAP auth token for an action."""
@@ -211,15 +222,17 @@ class NanoSOAPClient:
         headers['SOAPAction'] = '"{0}{1}"'.format(self.action, method)
 
         resp = yield from self.session.post(
-            self.address, data=xml, headers=headers, timeout=4)
+            self.address, data=xml, headers=headers, timeout=10)
         text = yield from resp.text()
         parsed = xmltodict.parse(text)
         if 'soap:Envelope' not in parsed:
             _LOGGER.error("parsed: " + str(parsed))
+            raise Exception('probably a bad response')
 
         return parsed['soap:Envelope']['soap:Body'][method + 'Response']
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
     loop = asyncio.get_event_loop()
 
     import sys

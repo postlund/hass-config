@@ -18,53 +18,49 @@ script:
               media_player.apple_tv
             {% endif %}
 
-alexa:
-  intents:
-    PlexSectionIntent:
-      action:
-        service: plex.latest_in_section
-        data_template:
-          section: '{{ Section }}'
-      speech:
-        type: plaintext
-        text: The latest '{{ Section }}' are '{{ states("plex.section") }}'
+intent_script:
+  PlexSectionIntent:
+    action:
+      service: plex.latest_in_section
+      data_template:
+        section: '{{ Section }}'
+    speech:
+       text: The latest '{{ Section }}' are '{{ states("plex.section") }}'
 
-    AppleTvIntent:
-      action:
-        service: script.playback_action
-        data_template:
-          action: '{{ Action }}'
-      speech:
-        type: plaintext
-        text: !include ../alexa_confirm.yaml
+  AppleTvIntent:
+    action:
+      service: script.playback_action
+      data_template:
+        action: '{{ Action }}'
+    speech:
+      text: !include ../alexa_confirm.yaml
 
-    SvtPlayIntent:
-      action:
-        service: script.svtplay_play
-        data_template:
-          entity_id: media_player.apple_tv
-          program: '{{ Program }}'
-      speech:
-        type: plaintext
-        text: >
-          {% if not is_state("svtplay_dl.link", 'unknown') %}
-            {{ [
-            "OK",
-            "Sure",
-            "If you insist",
-            "Done",
-            "No worries",
-            "I can do that",
-            "Leave it to me",
-            "Consider it done",
-            "As you wish",
-            "By your command",
-            "Affirmative",
-            "Yes oh revered one",
-            "I will",
-            "As you decree, so shall it be",
-            "No Problem"
-            ] | random }}
-          {% else %}
-            "Oops, something went wrong"
-          {% endif %}
+  SvtPlayIntent:
+    action:
+      service: script.svtplay_play
+      data_template:
+        entity_id: media_player.apple_tv
+        program: '{{ Program }}'
+    speech:
+      text: >
+        {% if not is_state("svtplay_dl.link", 'unknown') %}
+          {{ [
+          "OK",
+          "Sure",
+          "If you insist",
+          "Done",
+          "No worries",
+          "I can do that",
+          "Leave it to me",
+          "Consider it done",
+          "As you wish",
+          "By your command",
+          "Affirmative",
+          "Yes oh revered one",
+          "I will",
+          "As you decree, so shall it be",
+          "No Problem"
+          ] | random }}
+        {% else %}
+          "Oops, something went wrong"
+        {% endif %}

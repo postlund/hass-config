@@ -18,13 +18,15 @@ logbook:
 
 logger:
   default: warn
+map:
 ios:
 config:
 frontend:
 conversation:
 history:
 recorder:
-  purge_days: 3
+  purge_interval: 3
+  purge_keep_days: 2
 sun:
 http:
   server_port: 8123
@@ -35,6 +37,7 @@ http:
   ssl_certificate: !secret hass_ssl_certificate
   ssl_key: !secret hass_ssl_key
 
+alexa:
 zwave:
     usb_path: /dev/ttyACM0
     device_config: !include zwave_device_config.yaml
@@ -79,6 +82,7 @@ switch:
 apple_tv:
   - host: !secret atv_ip
     login_id: !secret atv_login_id
+    credentials: !secret atv_credentials
 
 tts:
   - platform: google

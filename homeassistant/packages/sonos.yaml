@@ -1,11 +1,11 @@
 homeassistant:
   customize:
     script.sonos_say:
-      emulated_hue: false
+      emulated_hue_hidden: true
     media_player.kok:
       emulated_hue_name: Sonos
     switch.sonos_player:
-      emulated_hue: false
+      emulated_hue_hidden: true
 
 switch:
   - platform: template

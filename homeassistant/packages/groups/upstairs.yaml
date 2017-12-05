@@ -1,13 +1,39 @@
+homeassistant:
+
+  customize:
+    switch.fonstret_i_sovrummet:
+      friendly_name: Bedroom window
+    switch.gastrummet:
+      friendly_name: Guest room
+    switch.barnrummet:
+      friendly_name: Baby room
+    switch.balkongen:
+      friendly_name: Balcony
+
 group:
+
+  upstair_lights:
+    name: Upstair lights
+    entities:
+      - switch.fonstret_i_sovrummet
+      - switch.gastrummet
+      - switch.barnrummet
 
   bedroom:
     name: Bedroom
     entities:
       - switch.pierre_bedroom
+      - switch.fonstret_i_sovrummet
+      - switch.balkongen
       - sensor.sovrum_temperature
       - binary_sensor.bedroom_sensor
 
-  guest_rooms:
-    name: Guest rooms
+  guest_room:
+    name: Guest room
     entities:
-      - switch.gstrum_fnster_6
+      - switch.gastrummet
+
+  baby_room:
+    name: Baby room
+    entities:
+      - switch.barnrummet

@@ -25,6 +25,7 @@ group:
     name: Basic Controls
     entities:
       - switch.downstair_lights
+      - switch.upstair_lights
       - switch.sonos_player
       - switch.television
 

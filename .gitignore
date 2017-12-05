@@ -18,3 +18,6 @@ secrets.yaml
 tts/
 zwcfg_*.xml
 zwscene.xml
+tellduslive.conf
+creds.dat
+client_secrets.json

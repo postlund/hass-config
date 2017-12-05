@@ -15,6 +15,22 @@ homeassistant:
       friendly_name: Dining room locker
     switch.dining_room_vase_switch:
       friendly_name: Dining room vase
+    switch.julgran:
+      friendly_name: Christmas tree
+    switch.fonstret_i_vardagsrummet:
+      friendly_name: Living room window
+    switch.fonstret_i_matrummet:
+      friendly_name: Dining room window
+    switch.fonstret_i_arbetsrummet:
+      friendly_name: Office window
+    switch.julgranen_i_arbetsrummet:
+      friendly_name: Office christmas tree
+    switch.fonstret_i_arbetsrummet:
+      friendly_name: Living room window
+    switch.lampan_i_koksfonstret:
+      friendly_name: Kitchen window
+    switch.utomhus:
+      friendly_name: Outside
 
 group:
 
@@ -27,6 +43,11 @@ group:
       - switch.living_room_stars_switch
       - switch.dining_room_locker_switch
       - switch.dining_room_vase_switch
+      - switch.fonstret_i_matrummet
+      - switch.fonstret_i_arbetsrummet
+      - switch.lampan_i_koksfonstret
+      - switch.utomhus
+      - switch.julgranen_i_arbetsrummet
 
   entrance:
     name: Entrance
@@ -39,17 +60,21 @@ group:
     entities:
       - sensor.vardagsrum_temperature
       - media_player.receiver
+      - switch.fonstret_i_arbetsrummet
       - switch.living_room_balls_switch
       - switch.living_room_stars_switch
+      - switch.julgran
 
   kitchen:
     name: Kitchen
     entities:
+      - switch.lampan_i_koksfonstret
       - binary_sensor.kitchen_sensor
 
   basement:
     name: Basement
     entities:
+      - switch.utomhus
       - sensor.pannrum_temperature
 
   garage:
@@ -64,8 +89,10 @@ group:
     entities:
       - switch.dining_room_locker_switch
       - switch.dining_room_vase_switch
+      - switch.fonstret_i_matrummet
 
   office:
     name: Office
     entities:
       - switch.fonstret_i_arbetsrummet
+      - switch.julgranen_i_arbetsrummet

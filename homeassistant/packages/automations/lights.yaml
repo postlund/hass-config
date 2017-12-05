@@ -52,4 +52,4 @@ automation:
         {% else %}
           switch.turn_off
         {% endif %}
-      entity_id: switch.downstair_lights
+      entity_id: ['switch.downstair_lights', 'switch.upstair_lights']
