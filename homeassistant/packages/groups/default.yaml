@@ -2,12 +2,14 @@ homeassistant:
   customize:
     group.basic:
       order: 1
-    group.tv_shows:
+    group.food_planning_group:
       order: 2
-    group.movies:
+    group.tv_shows:
       order: 3
-    group.links:
+    group.movies:
       order: 4
+    group.links:
+      order: 5
 
 group:
 

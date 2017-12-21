@@ -1,0 +1,4 @@
+client_config_file: /home/homeassistant/.homeassistant/client_secrets.json
+save_credentials: true
+save_credentials_backend: file
+save_credentials_file: /home/homeassistant/.homeassistant/creds.dat

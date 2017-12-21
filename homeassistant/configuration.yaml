@@ -22,6 +22,9 @@ map:
 ios:
 config:
 frontend:
+  extra_html_url:
+    - /local/custom_ui/state-card-food-planning.html
+
 conversation:
 history:
 recorder:

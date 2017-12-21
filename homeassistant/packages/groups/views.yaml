@@ -10,6 +10,7 @@ group:
       - sensor.ute_temperature
       - switch.downstair_lights
       - group.basic
+      - group.food_planning_group
       - group.tv_shows
       - group.movies
       - history_graph.temperatures

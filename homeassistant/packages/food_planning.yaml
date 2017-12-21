@@ -1,0 +1,24 @@
+food_planning:
+  file_id: !secret food_planning_document
+  days:
+    - name: Monday
+      day_name: Mån
+      day_number: 0
+    - name: Tuesday
+      day_name: Tis
+      day_number: 1
+    - name: Wednesday
+      day_name: Ons
+      day_number: 2
+    - name: Thursday
+      day_name: Tors
+      day_number: 3
+    - name: Friday
+      day_name: Fre
+      day_number: 4
+    - name: Saturday
+      day_name: Lör
+      day_number: 5
+    - name: Sunday
+      day_name: Sön
+      day_number: 6
