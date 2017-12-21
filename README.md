@@ -1,6 +1,8 @@
 # Home Assistant Configuration
 Here is the start of my Home Assistant configuration. More details to come...
 
+![Alt text](/screenshots/main.png?raw=true "Main Screen")
+
 ## Software and devices
 
 **HW/SW Platform**
@@ -32,6 +34,7 @@ Here are some of the custom components I have implemented:
 * _svtplay_dl_ - Play streams on a media player using svtplay_dl script
 * _media_watcher_ - Create sensors based on tv shows and/or sections in Plex (does not work with plexapi 2.0.2 or earlier)
 * _dlink_motion_sensor_ - Support for D-Link DCH-S150 motion sensor
+* _food_planning_ - Fetches weekly food planning from Google Drive and presents as sensors with a custom UI
 
 Feel free to use the components and send a PR if you have any changes to share.
 Please note that I have written these for my own needs and do _not_ give any support
