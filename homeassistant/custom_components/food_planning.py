@@ -94,6 +94,27 @@ def _read_file(outfile):
     return data
 
 
+def parse_food_menu(raw_menu, day_list):
+    """Parse a food menu and return as a dict."""
+    day_regex = r'\s*({0})\s*'.format('|'.join(day_list))
+    result = {}
+    started = False
+    current_day = None
+
+    for line in (raw_menu.rstrip() + '\n' + day_list[0]).split('\n'):
+        if re.match(day_regex, line):
+            started = True
+            current_day = line.lstrip()
+        elif started:
+            fixed = line.rstrip().lstrip()
+            if current_day in result:
+                result[current_day] += ', ' + fixed
+            else:
+                result[current_day] = fixed
+
+    return result
+
+
 @asyncio.coroutine
 def async_setup(hass, config):
     """Set up the food planning component."""
@@ -104,13 +125,12 @@ def async_setup(hass, config):
 
     hass.data[DATA_FOOD_PLANNING] = {}
 
-    day_pattern = '|'.join([x.get(CONF_DAY_NAME) for x in days])
+    day_names = [x.get(CONF_DAY_NAME) for x in days]
 
     @asyncio.coroutine
-    def get_week_food_planning(file_id, day_pattern):
+    def get_week_food_planning(file_id):
         """Extract and save food planning."""
         outfile = TEMP_FILE_BASE + file_id
-        regex = r'\s({0})\n\s*(.*)\n'.format(day_pattern)
 
         try:
             yield from hass.loop.run_in_executor(
@@ -118,9 +138,7 @@ def async_setup(hass, config):
             data = yield from hass.loop.run_in_executor(
                 None, _read_file, outfile)
 
-            days = re.findall(regex, data)
-            if days:
-                return dict([(k[0], k[1]) for k in days])
+            return parse_food_menu(data, day_names)
 
         finally:
             os.unlink(outfile)
@@ -128,11 +146,11 @@ def async_setup(hass, config):
         return {}
 
     @asyncio.coroutine
-    def async_update_data(now):
+    def async_update_data(now):  # pylint: disable=unused-argument
         """Update data from google drive."""
         try:
             hass.data[DATA_FOOD_PLANNING] = yield from get_week_food_planning(
-                file_id, day_pattern)
+                file_id)
             async_dispatcher_send(hass, SIGNAL_FOOD_DATA_UPDATED)
         except Exception:  # pylint: disable=broad-except
             _LOGGER.exception('failed to update')
