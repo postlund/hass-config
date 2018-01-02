@@ -79,5 +79,7 @@
     "8": "switch.hornlampa_vardagsrum",
     "80": "switch.balkongen",
     "81": "script.start_stream",
+    "82": "media_player.emby__emby_mobile__chrome_2",
+    "83": "media_player.emby__emby_mobile__web_browser_iphone_2",
     "9": "group.all_scripts"
 }

@@ -25,8 +25,6 @@ homeassistant:
       friendly_name: Office window
     switch.julgranen_i_arbetsrummet:
       friendly_name: Office christmas tree
-    switch.fonstret_i_arbetsrummet:
-      friendly_name: Living room window
     switch.lampan_i_koksfonstret:
       friendly_name: Kitchen window
     switch.utomhus:
