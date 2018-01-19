@@ -1,0 +1,68 @@
+homeassistant:
+
+  customize:
+    input_text.remote_control:
+      custom_ui_state_card: state-card-tiles
+      config:
+        column_width: 100px
+        row_height: 65px
+        gap: 4px
+        color: #0099FF
+        color_on: #669900
+        color_off: #990033
+        entities:
+          - entity: switch.downstair_lights
+            icon: mdi:lamp
+            label: Down
+          - entity: switch.upstair_lights
+            icon: mdi:lamp
+            label: Up
+          - entity: switch.sonos_player
+            icon: mdi:music-note
+            label: Sonos
+          - entity: switch.television
+            icon: mdi:television-classic
+            label: TV Set
+          - entity: script.tv_on_off
+            icon: mdi:television-box
+            label: TV
+          - entity: switch.receiver_hdmi2
+            icon: mdi:library-music
+            label: Receiver HDMI2
+          - entity: script.tv_set_hdmi1
+            icon: mdi:television
+            label: TV HDMI1
+
+input_text:
+  remote_control:
+    name: Remote Control
+
+group:
+  remote_control:
+    name: Remote Control
+    entities:
+      - input_text.remote_control
+
+switch:
+  - platform: template
+    switches:
+      receiver_hdmi2:
+        friendly_name: Receiver HDMI2
+        value_template: "{{ is_state('media_player.receiver', 'on') and states.media_player.receiver.attributes.source == 'HDMI2' }}"
+        turn_on:
+          service: script.receiver_hdmi2
+        turn_off:
+          service: media_player.turn_off
+          data:
+            entity_id: media_player.receiver
+
+script:
+  receiver_hdmi2:
+    alias: Set receiver source to HDMI2
+    sequence:
+      - service: media_player.turn_on
+        entity_id: media_player.receiver
+      - service: media_player.select_source
+        entity_id: media_player.receiver
+        data:
+          source: HDMI2

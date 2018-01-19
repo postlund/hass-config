@@ -4,12 +4,12 @@ group:
     view: yes
     icon: mdi:home
     entities:
+      - group.remote_control
       - sensor.vardagsrum_temperature
       - sensor.sovrum_temperature
       - sensor.pannrum_temperature
       - sensor.ute_temperature
       - switch.downstair_lights
-      - group.basic
       - group.food_planning_group
       - group.tv_shows
       - group.movies

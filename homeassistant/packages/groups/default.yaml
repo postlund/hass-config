@@ -1,6 +1,6 @@
 homeassistant:
   customize:
-    group.basic:
+    group.remote_control:
       order: 1
     group.food_planning_group:
       order: 2
@@ -22,14 +22,6 @@ group:
       - sensor.yr_symbol
       - sensor.yr_temperature
       - sensor.yr_wind_speed
-
-  basic:
-    name: Basic Controls
-    entities:
-      - switch.downstair_lights
-      - switch.upstair_lights
-      - switch.sonos_player
-      - switch.television
 
   movies:
     name: Movies
