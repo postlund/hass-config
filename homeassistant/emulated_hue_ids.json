@@ -81,5 +81,12 @@
     "81": "script.start_stream",
     "82": "media_player.emby__emby_mobile__chrome_2",
     "83": "media_player.emby__emby_mobile__web_browser_iphone_2",
-    "9": "group.all_scripts"
+    "84": "media_player.hdmi_0",
+    "85": "media_player.hdmi_4",
+    "86": "script.tv_set_hdmi_port",
+    "87": "script.tv_on_off",
+    "88": "script.tv_set_hdmi1",
+    "89": "script.receiver_hdmi2",
+    "9": "group.all_scripts",
+    "90": "switch.receiver_hdmi2"
 }

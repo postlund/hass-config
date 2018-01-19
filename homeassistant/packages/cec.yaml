@@ -1,4 +1,4 @@
-# hdmi_cec:
-#   platform: media_player
-#   devices:
-#     TV: 0.0.0.0
+hdmi_cec:
+  platform: media_player
+  devices:
+    TV: 0.0.0.0
