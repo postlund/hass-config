@@ -160,9 +160,9 @@ class Svtplay:
 
     @asyncio.coroutine
     def async_feed(self, title):
-        js = yield from get_url(self._hass, 'http://www.tv4play.se/api/video_assets?nodes=' + title)
+        js = yield from get_url(self._hass, 'http://webapi.tv4play.se/play/video_assets?nodes=' + title)
         data = json.loads(js.decode('utf-8'))
-        _LOGGER.warning('data: %s', data)
+
         if data['total_hits'] == 0:
             _LOGGER.warning('No program found')
             return False
@@ -178,7 +178,6 @@ class Svtplay:
     def async_play(self):
         _LOGGER.warning('Trying to play %s', self._url)
         cmd = self._build_cmd(add_account=False)
-        _LOGGER.info('cmd: %s', cmd)
         proc = yield from asyncio.create_subprocess_shell(
             cmd,
             stdout=asyncio.subprocess.PIPE,
@@ -219,6 +218,7 @@ class Svtplay:
             ATTR_MEDIA_CONTENT_ID: url,
             ATTR_MEDIA_CONTENT_TYPE: MEDIA_TYPE_VIDEO
         }
+
         self._hass.async_add_job(self._hass.services.async_call(
             media_player.DOMAIN, SERVICE_PLAY_MEDIA, data))
         return True
