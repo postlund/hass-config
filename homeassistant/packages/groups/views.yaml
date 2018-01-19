@@ -9,7 +9,6 @@ group:
       - sensor.sovrum_temperature
       - sensor.pannrum_temperature
       - sensor.ute_temperature
-      - switch.downstair_lights
       - group.food_planning_group
       - group.tv_shows
       - group.movies
