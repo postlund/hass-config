@@ -1,0 +1,72 @@
+input_datetime:
+  engine_heater:
+    name: Start Time
+    has_date: false
+    has_time: true
+
+input_boolean:
+  engine_heater:
+    name: Enabled
+    icon: mdi:car
+
+input_select:
+  engine_heater:
+    name: Notify
+    options:
+      - Pierre
+      - Tove
+      - All
+    icon: mdi:panda
+
+input_number:
+  engine_heater:
+    name: Auto-Off
+    min: 0
+    step: 10
+    max: 120
+    unit_of_measurement: 'Min'
+
+group:
+  engine_heater:
+    name: Engine Heater
+    entities:
+      - switch.utomhus
+      - input_boolean.engine_heater
+      - input_datetime.engine_heater
+      - input_number.engine_heater
+      - input_select.engine_heater
+
+automation:
+  - alias: Turn on engine pre-heater
+    trigger:
+      - platform: template
+        value_template: "{{ states('sensor.time') == (states.input_datetime.engine_heater.attributes.timestamp | int | timestamp_custom('%H:%M', False)) }}"
+    condition:
+      - condition: state
+        entity_id: input_boolean.engine_heater
+        state: 'on'
+    action:
+      - service: switch.turn_on
+        entity_id: switch.utomhus
+      - service_template: >
+          {% if is_state('input_select.engine_heater', 'Pierre') %}
+            notify.ios_pierres_iphone
+          {% elif is_state('input_select.engine_heater', 'Tove') %}
+            notify.ios_toves_iphone
+          {% else %}
+            notify.all_people
+          {% endif %}
+        data:
+          title: Engine Heater
+          message: Turned ON engine heater!
+
+  - alias: Automatic engine pre-heater turn off
+    trigger:
+      - platform: template
+        value_template: >
+          {% set start = states.input_datetime.engine_heater.attributes.timestamp | int %}
+          {% set delay = states.input_number.engine_heater.state | int %}
+          {{ states('sensor.time') == ((start + delay * 60) | timestamp_custom('%H:%M', False)) }}
+    action:
+      - service: switch.turn_off
+        entity_id: switch.utomhus

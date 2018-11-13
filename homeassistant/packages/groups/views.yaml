@@ -5,6 +5,7 @@ group:
     icon: mdi:home
     entities:
       - group.remote_control
+      - group.engine_heater
       - sensor.vardagsrum_temperature
       - sensor.sovrum_temperature
       - sensor.pannrum_temperature
