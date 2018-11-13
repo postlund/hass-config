@@ -28,8 +28,6 @@ sensor:
     - type: process
       arg: btscand
   - platform: time_date
-    display_options:
-    - 'date_time'
   - platform: dnsip
 
 script:

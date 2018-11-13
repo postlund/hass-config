@@ -1,0 +1,50 @@
+<dom-module id='state-card-food-planning'>
+  <template>
+    <style>
+      a {
+        color: var(--dark-primary-color);
+      }
+
+      .today {
+         font-style: italic;
+      }
+
+      .normal {
+      }
+    </style>
+    <b class$='[[getStyle()]]'>[[stateObj.attributes.friendly_name]]</b>
+    <template is='dom-if' if='[[hasLink()]]'>
+      <p><a href="[[stateObj.attributes.link]]" target="_blank">[[stateObj.state]]</a></p>
+    </template>
+    <template is='dom-if' if='[[!hasLink(stateObj)]]'>
+      <p>[[stateObj.state]]</p>
+    </template>
+  </template>
+</dom-module>
+
+
+<script>
+Polymer({
+  is: 'state-card-food-planning',
+  properties: {
+    hass: {
+      type: Object,
+    },
+    inDialog: {
+      type: Boolean,
+      value: false,
+    },
+    stateObj: {
+      type: Object,
+    },
+  },
+
+  getStyle: function() {
+    return this.stateObj.attributes.today ? 'today' : 'normal';
+  },
+
+  hasLink: function() {
+    return this.stateObj.attributes.link != "";
+  },
+});
+</script>

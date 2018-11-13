@@ -5,6 +5,8 @@ homeassistant:
   elevation: !secret hass_elevation
   unit_system: metric
   time_zone: Europe/Stockholm
+  whitelist_external_dirs:
+    - /hass/
 
   packages: !include_dir_named packages
 
@@ -25,6 +27,9 @@ frontend:
   extra_html_url:
     - /local/custom_ui/state-card-tiles.html
     - /local/custom_ui/state-card-food-planning.html
+  extra_html_url_es5:
+    - /local/custom_ui/state-card-tiles_es5.html
+    - /local/custom_ui/state-card-food-planning_es5.html
 
 conversation:
 history:
@@ -41,6 +46,7 @@ http:
   ssl_certificate: !secret hass_ssl_certificate
   ssl_key: !secret hass_ssl_key
 
+homekit:
 alexa:
 zwave:
     usb_path: /dev/ttyACM0

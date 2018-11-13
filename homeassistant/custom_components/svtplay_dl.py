@@ -29,7 +29,7 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 DOMAIN = 'svtplay_dl'
 
-REQUIREMENTS = ['svtplay_dl==1.9.3']
+REQUIREMENTS = ['svtplay_dl==2.0']
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -141,8 +141,7 @@ def async_setup(hass, config):
         entity.set_state(player._url if res else None)
 
     hass.services.async_register(
-        DOMAIN, SERVICE_PLAY_URL, async_handle_play,
-        None, schema=PLAY_SCHEMA)
+        DOMAIN, SERVICE_PLAY_URL, async_handle_play, schema=PLAY_SCHEMA)
 
     return True
 
@@ -168,7 +167,7 @@ class Svtplay:
             return False
 
         program = data['results'][0]
-        self._url = 'http://tv4play.se/program/{0}?video_id={1}'.format(
+        self._url = 'http://www.tv4play.se/program/{0}?video_id={1}'.format(
             program['program_nid'], program['id'])
 
         _LOGGER.info('Found URL: ' + self._url)

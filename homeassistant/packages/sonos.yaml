@@ -20,9 +20,6 @@ switch:
           service: media_player.media_pause
           entity_id: media_player.kok
 
-media_player:
-  - platform: sonos
-
 script:
   sonos_say:
     alias: "Sonos TTS script"

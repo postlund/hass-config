@@ -75,7 +75,7 @@ def async_setup(hass, config):
 
     hass.services.async_register(
         DOMAIN, SERVICE_LATEST_IN_SECTION, async_handle_latest_section,
-        None, schema=PLEX_SECTION_SCHEMA)
+        schema=PLEX_SECTION_SCHEMA)
 
     return True
 

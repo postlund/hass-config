@@ -88,5 +88,6 @@
     "88": "script.tv_set_hdmi1",
     "89": "script.receiver_hdmi2",
     "9": "group.all_scripts",
-    "90": "switch.receiver_hdmi2"
+    "90": "switch.receiver_hdmi2",
+    "91": "media_player.hdmi_c"
 }
