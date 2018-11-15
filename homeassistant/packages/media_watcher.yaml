@@ -1,25 +1,25 @@
-automation:
-  - alias: New TV Show Added
-    trigger:
-      - platform: state
-        entity_id:
-          - !secret media_watcher_tv1_sensor
-          - !secret media_watcher_tv2_sensor
-          - !secret media_watcher_tv3_sensor
-          - !secret media_watcher_tv4_sensor
-          - !secret media_watcher_tv5_sensor
-          - !secret media_watcher_tv6_sensor
-          - !secret media_watcher_tv7_sensor
-          - !secret media_watcher_tv8_sensor
-    condition:
-      - condition: template
-        value_template: '{{ trigger.from_state.state|int < trigger.to_state.state|int }}'
-    action:
-      - service: notify.all_people
-        data_template:
-          message: >
-            New episode of {{ states.sensor[trigger.entity_id.split('.')[1]].name }} is out!
-          title: New episode added
+# automation:
+#   - alias: New TV Show Added
+#     trigger:
+#       - platform: state
+#         entity_id:
+#           - !secret media_watcher_tv1_sensor
+#           - !secret media_watcher_tv2_sensor
+#           - !secret media_watcher_tv3_sensor
+#           - !secret media_watcher_tv4_sensor
+#           - !secret media_watcher_tv5_sensor
+#           - !secret media_watcher_tv6_sensor
+#           - !secret media_watcher_tv7_sensor
+#           - !secret media_watcher_tv8_sensor
+#     condition:
+#       - condition: template
+#         value_template: '{{ trigger.from_state.state|int < trigger.to_state.state|int }}'
+#     action:
+#       - service: notify.all_people
+#         data_template:
+#           message: >
+#             New episode of {{ states.sensor[trigger.entity_id.split('.')[1]].name }} is out!
+#           title: New episode added
 
 # media_watcher:
 #   host: !secret media_watcher_server
@@ -36,5 +36,5 @@ automation:
 #     - Movies
 
 # TODO: Will be replaced by media_watcher soon
-plex:
-  server: !secret media_watcher_server
+# plex:
+#  server: !secret media_watcher_server

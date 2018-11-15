@@ -78,6 +78,3 @@ group:
       - group.all_automations
       - group.all_scripts
       - svtplay_dl.link
-      - plex.section
-      - input_select.log_level
-

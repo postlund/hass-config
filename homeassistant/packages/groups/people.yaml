@@ -11,8 +11,8 @@ group:
     name: People and Devices
     entities:
       - device_tracker.pierres_iphone
-      - sensor.pierres_iphone_battery_level
-      - sensor.pierres_iphone_battery_state
+      - sensor.pierres_iphone_battery_level_3
+      - sensor.pierres_iphone_battery_state_3
       - device_tracker.toves_iphone
       - device_tracker.tove_ipad
       - device_tracker.tove_macbook

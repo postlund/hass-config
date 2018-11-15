@@ -25,6 +25,8 @@ DOMAIN = 'food_planning'
 
 REQUIREMENTS = ['PyDrive==1.3.1']
 
+DEPENDENCIES = ['group']
+
 CONF_DAYS = 'days'
 CONF_DAY_NAME = 'day_name'
 CONF_DAY_NUMBER = 'day_number'
@@ -80,7 +82,7 @@ def _read_file(outfile):
     data = ''
     cnt = 0
 
-    with open(outfile, 'r') as file_handle:
+    with open(outfile, 'r', encoding='utf-8') as file_handle:
         for line in file_handle:
             if len(line) == 1:
                 cnt += 1
@@ -111,6 +113,7 @@ def parse_food_menu(raw_menu, day_list):
                 result[current_day] += ', ' + fixed
             else:
                 result[current_day] = fixed
+            result[current_day] = result[current_day][0:254]
 
     return result
 
@@ -167,10 +170,14 @@ def async_setup(hass, config):
 
     yield from async_update_data(None)
 
-    group.set_group(hass,
-                    'food_planning_group',
-                    name=domain.get(CONF_GROUP),
-                    entity_ids=ents)
+    data = {
+        group.ATTR_OBJECT_ID: 'food_planning_group',
+        group.ATTR_NAME: domain.get(CONF_GROUP),
+        group.ATTR_ENTITIES: ents,
+    }
+
+    yield from hass.services.async_call(
+        group.DOMAIN, group.SERVICE_SET, data)
 
     return True
 

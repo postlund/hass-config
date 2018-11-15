@@ -42,7 +42,6 @@ http:
   ip_ban_enabled: true
   login_attempts_threshold: 15
   base_url: !secret hass_base_url
-  api_password: !secret http_password
   ssl_certificate: !secret hass_ssl_certificate
   ssl_key: !secret hass_ssl_key
 

@@ -24,18 +24,17 @@ homeassistant:
       icon: mdi:run
     device_tracker.bedroom_motion:
       icon: mdi:run
-    sensor.7073cbd64108:
-      friendly_name: Apple TV Bluetooth
 
 group:
 
   server:
     name: Server
     entities:
-      - sensor.myipopendnscom
-      - sensor.cpu_used
-      - sensor.ram_available
-      - sensor.disk_used_
+      - sensor.myip
+      - sensor.processor_use
+      - sensor.memory_free
+      - sensor.disk_use_percent_
+      - sensor.log_size
 
   network:
     name: Network
@@ -52,8 +51,6 @@ group:
     name: Processes
     entities:
       - sensor.process_mosquitto
-      - sensor.process_homebridge
-      - sensor.process_btscand
 
   hardware:
     name: Hardware
@@ -72,8 +69,3 @@ group:
       - device_tracker.switch_vardagsrum
       - device_tracker.kitchen_motion
       - device_tracker.bedroom_motion
-
-  bluetooth:
-    name: Bluetooth
-    entities:
-      - sensor.7073cbd64108

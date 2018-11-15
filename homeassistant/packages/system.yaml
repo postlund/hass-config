@@ -4,9 +4,6 @@ automation:
       platform: state
       entity_id:
         - sensor.process_mosquitto
-        - sensor.process_influxd
-        - sensor.process_homebridge
-        - sensor.process_forkeddappd
     action:
       service: notify.system
       data_template:
@@ -23,15 +20,6 @@ sensor:
     - type: processor_use
     - type: process
       arg: mosquitto
-    - type: process
-      arg: homebridge
-    - type: process
-      arg: btscand
   - platform: time_date
   - platform: dnsip
-
-script:
-  restart_hass:
-    alias: Restart Home Assistant
-    sequence:
-      - service: homeassistant.restart
+    name: IP-Address
