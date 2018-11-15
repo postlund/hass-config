@@ -1,11 +1,11 @@
-camera:
-    platform: rpi_camera
-    name: Raspberry Pi Camera
-    image_width: 640
-    image_height: 480
-    image_quality: 8
-    image_rotation: 0
-    timelapse: 1000
-    horizontal_flip: 1
-    vertical_flip: 1
-    file_path: /hass/image.jpg
+# camera:
+#     platform: rpi_camera
+#     name: Raspberry Pi Camera
+#     image_width: 640
+#     image_height: 480
+#     image_quality: 8
+#     image_rotation: 0
+#     timelapse: 1000
+#     horizontal_flip: 1
+#     vertical_flip: 1
+#     file_path: /hass/image.jpg
