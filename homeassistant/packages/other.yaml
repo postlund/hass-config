@@ -1,26 +1,6 @@
-automation:
-  - alias: Startup notification
-    trigger:
-      platform: homeassistant
-      event: start
-    action:
-      service: notify.system
-      data_template:
-        message: 'Home Assistant has started (IP: {{ states.sensor.ipaddress.state }})'
-        title: System Notification
-
-  - alias: Notify for new devices
-    trigger:
-      platform: event
-      event_type: device_tracker_new_device
-    action:
-      - service: notify.system
-        data_template:
-          message: >
-            New device:
-            {{trigger.event.data.host_name}}
-            {{trigger.event.data.entity_id}}
-          title: System Notification
+input_boolean:
+  pierre_bedroom_run_today:
+    name: Turn on Pierres bedroom lamp automation has run today
 
 sensor:
   - platform: command_line

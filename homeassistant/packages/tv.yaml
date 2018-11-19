@@ -4,6 +4,7 @@ switch:
     switches:
       television:
         friendly_name: Television
+        entity_id: media_player.receiver
         value_template: "{{ is_state('media_player.receiver', 'on') }}"
         turn_on:
           service: script.tv_turn_on

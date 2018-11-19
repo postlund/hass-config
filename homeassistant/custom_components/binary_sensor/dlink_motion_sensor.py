@@ -39,7 +39,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 @asyncio.coroutine
 def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
     """Set up the D-Link motion sensor."""
-    from .dlink_new import HNAPClient, MotionSensor, NanoSOAPClient, ACTION_BASE_URL
+    from .dlink import HNAPClient, MotionSensor, NanoSOAPClient, ACTION_BASE_URL
 
     soap = NanoSOAPClient(
         config.get(CONF_HOST),

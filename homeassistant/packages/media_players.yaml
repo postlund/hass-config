@@ -1,4 +1,8 @@
 media_player:
+  - platform: yamaha
+    name: Receiver
+    zone_ignore:
+      - Zone_2
   - platform: emby
     host: !secret emby_host
     api_key: !secret emby_key

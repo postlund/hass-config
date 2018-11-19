@@ -1,16 +1,3 @@
-automation:
-  - alias: Process down
-    trigger:
-      platform: state
-      entity_id:
-        - sensor.process_mosquitto
-    action:
-      service: notify.system
-      data_template:
-        message: >
-          {{ trigger.entity_id.split('.')[1] }} is {{ trigger.to_state.state.lower() }}
-        title: System Notification
-
 sensor:
   - platform: systemmonitor
     resources:
