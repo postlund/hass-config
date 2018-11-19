@@ -31,8 +31,3 @@ group:
       - device_tracker.pierres_iphone
       - device_tracker.toves_iphone
 
-  pierre_travel:
-    name: Pierre Travel Times
-    entities:
-      - sensor.pierre_to_work
-      - sensor.pierre_to_home

@@ -52,13 +52,6 @@ group:
     entities:
       - group.people_devices
 
-  travel_view:
-    name: Travel
-    view: yes
-    icon: mdi:car
-    entities:
-      - group.pierre_travel
-
   monitoring:
     name: Monitoring
     view: yes
