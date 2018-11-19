@@ -1,0 +1,140 @@
+title: My Awesome Home
+
+resources:
+  - url: /local/tracker-card.js?v=0
+    type: js
+  - url: /local/mini-media-player-bundle.js?v=0.9.2
+    type: module
+  - url: /local/button-card.js
+    type: module
+  - url: /local/custom-lovelace/swipe-card/swipe-card.js?v=1.1.0
+    type: module
+  - url: /local/custom-lovelace/upcoming-media-card/upcoming-media-card.js?v=0.1.2
+    type: js
+
+views:
+  - title: Example
+    cards:
+      - type: weather-forecast
+        entity: weather.smhi_home
+      - type: vertical-stack
+        cards:
+        - type: horizontal-stack
+          cards:
+            - type: custom:button-card
+              entity: switch.downstair_lights
+              icon: mdi:lamp
+              name: Down
+              size: 20px
+            - type: custom:button-card
+              entity: switch.upstair_lights
+              icon: mdi:lamp
+              name: Up
+              size: 20px
+            - type: custom:button-card
+              entity: switch.sonos_player
+              icon: mdi:music-note
+              name: Sonos
+              size: 20px
+            - type: custom:button-card
+              entity: switch.television
+              icon: mdi:television-classic
+              name: TV Set
+              size: 20px
+        - type: horizontal-stack
+          cards:
+            - type: custom:button-card
+              entity: script.tv_on_off
+              icon: mdi:television-box
+              name: TV
+              size: 20%
+            - type: custom:button-card
+              entity: switch.receiver_hdmi2
+              icon: mdi:library-music
+              name: RXV HDMI2
+              size: 20%
+            - type: custom:button-card
+              entity: script.tv_set_hdmi1
+              icon: mdi:television
+              name: TV HDMI1
+              size: 20%
+      - type: glance
+        show_state: false
+        entities:
+          - weblink.couchpotato
+          - weblink.emby
+          - weblink.sonarr
+          - weblink.transmission
+      - type: custom:tracker-card
+        title:
+        trackers:
+          - sensor.custom_card_tracker
+          - sensor.custom_component_tracker
+      - type: entities
+        entities:
+          - type: custom:mini-media-player
+            entity: media_player.kok
+            name: Sonos
+            artwork: cover
+            power_color: true
+            hide_volume: false
+            group: true
+          - type: custom:mini-media-player
+            entity: media_player.apple_tv
+            name: Apple TV
+            artwork: cover
+            power_color: true
+            hide_volume: false
+            show_progress: true
+            group: true
+      - type: custom:swipe-card
+        card_width: '185px'
+        start_card: 2
+        parameters:
+          effect: 'coverflow'
+          grabCursor: true
+          centeredSlides: true
+          slidesPerView: 'auto'
+          coverflowEffect:
+            rotate: 50
+            stretch: 0
+            depth: 100
+            modifier: 1
+            slideShadows : true
+          pagination:
+            type: 'bullets'
+        cards:
+          - type: sensor
+            entity: sensor.vardagsrum_temperature
+            name: Living Room
+            line_width: 8
+            line_color: '#FF6384'
+          - type: sensor
+            entity: sensor.sovrum_temperature
+            name: Bedroom
+            line_color: '#36A2EB'
+            line_width: 8
+          - type: sensor
+            entity: sensor.pannrum_temperature
+            name: Basement
+            line_color: '#ffce57'
+            line_width: 8
+          - type: sensor
+            entity: sensor.ute_temperature
+            name: Outside
+            line_color: "#4BC0C0"
+            accuracy: 8
+            line_width: 8
+      - type: horizontal-stack
+        cards:
+          - type: gauge
+            title: CPU
+            entity: sensor.processor_use
+          - type: gauge
+            title: RAM
+            entity: sensor.memory_free
+          - type: gauge
+            title: Disk
+            entity: sensor.disk_use_percent_
+
+
