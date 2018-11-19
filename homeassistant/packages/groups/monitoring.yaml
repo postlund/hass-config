@@ -30,7 +30,7 @@ group:
   server:
     name: Server
     entities:
-      - sensor.myip
+      - sensor.ipaddress
       - sensor.processor_use
       - sensor.memory_free
       - sensor.disk_use_percent_

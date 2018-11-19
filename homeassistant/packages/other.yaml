@@ -6,7 +6,7 @@ automation:
     action:
       service: notify.system
       data_template:
-        message: 'Home Assistant has started (IP: {{ states.sensor.myip.state }})'
+        message: 'Home Assistant has started (IP: {{ states.sensor.ipaddress.state }})'
         title: System Notification
 
   - alias: Notify for new devices
