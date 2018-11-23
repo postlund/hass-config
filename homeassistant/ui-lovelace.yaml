@@ -131,7 +131,8 @@ views:
             title: CPU
             entity: sensor.processor_use
           - type: gauge
-            title: RAM
+            title: Free RAM
+            max: 1024
             entity: sensor.memory_free
           - type: gauge
             title: Disk
