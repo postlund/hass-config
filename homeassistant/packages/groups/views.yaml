@@ -11,8 +11,6 @@ group:
       - sensor.pannrum_temperature
       - sensor.ute_temperature
       - group.food_planning_group
-      - group.tv_shows
-      - group.movies
       - history_graph.temperatures
       - group.airplay
       - media_player.kok
