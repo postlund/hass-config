@@ -44,7 +44,7 @@ group:
       - switch.fonstret_i_matrummet
       - switch.fonstret_i_arbetsrummet
       - switch.lampan_i_koksfonstret
-      - switch.utomhus
+      #- switch.utomhus
       - switch.julgranen_i_arbetsrummet
 
   entrance:
