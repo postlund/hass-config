@@ -89,5 +89,6 @@
     "89": "script.receiver_hdmi2",
     "9": "group.all_scripts",
     "90": "switch.receiver_hdmi2",
-    "91": "media_player.hdmi_c"
+    "91": "media_player.hdmi_c",
+    "92": "switch.garage_door_switch"
 }

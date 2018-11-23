@@ -12,6 +12,14 @@ homeassistant:
 
 automation: !include automations.yaml
 
+calendar:
+  - platform: caldav
+    username: !secret icloud_username
+    password: !secret icloud_password
+    url: !secret icloud_calendar
+    calendars:
+      - Familj
+
 logbook:
   exclude:
     entities:
@@ -55,6 +63,7 @@ custom_updater:
     - https://raw.githubusercontent.com/kalkih/mini-media-player/master/tracker.json
     - https://raw.githubusercontent.com/kuuji/button-card/master/tracker.json
     - https://raw.githubusercontent.com/bramkragten/custom-ui/master/updater.json
+    - https://raw.githubusercontent.com/rdehuyss/homeassistant-lovelace-google-calendar-card/master/custom_updater.json
 homekit:
 alexa:
 zwave:

@@ -11,6 +11,10 @@ resources:
     type: module
   - url: /local/custom-lovelace/upcoming-media-card/upcoming-media-card.js?v=0.1.2
     type: js
+  - url: https://unpkg.com/moment@2.22.2/moment.js
+    type: js
+  - url: /local/custom_ui/calendar-card/calendar-card.js?v=1.0.1
+    type: module
 
 views:
   - title: Example
@@ -137,5 +141,9 @@ views:
           - type: gauge
             title: Disk
             entity: sensor.disk_use_percent_
-
-
+      - type: custom:calendar-card
+        name: 'Calendar'
+        showProgressBar: false
+        numberOfDays: 30
+        entities:
+          - calendar.familj
