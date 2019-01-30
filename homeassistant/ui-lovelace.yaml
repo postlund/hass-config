@@ -1,134 +1,321 @@
-title: My Awesome Home
+title: Home Sweet Home
 
 resources:
-  - url: /local/tracker-card.js?v=0
+  - url: /local/tracker-card.js?v=0.3.0
     type: js
-  - url: /local/mini-media-player-bundle.js?v=0.9.2
+  - url: /local/mini-media-player-bundle.js?v=0.9.8
     type: module
-  - url: /local/button-card.js
+  - url: /local/button-card.js?v=0.0.5
     type: module
-  - url: /local/custom-lovelace/swipe-card/swipe-card.js?v=1.1.0
+  - url: /local/custom-lovelace/swipe-card/swipe-card.js?v=2.0.0
     type: module
-  - url: /local/custom-lovelace/upcoming-media-card/upcoming-media-card.js?v=0.1.2
+  - url: /local/custom-lovelace/upcoming-media-card/upcoming-media-card.js?v=0.3.4
     type: js
-  - url: https://unpkg.com/moment@2.22.2/moment.js
+  - url: https://unpkg.com/moment@2.22.2/moment.js?v=0.0.1
     type: js
   - url: /local/custom_ui/calendar-card/calendar-card.js?v=1.0.1
     type: module
+  - url: /local/mini-graph-card-bundle.js?v=0.2.1
+    type: js
+  - url: /local/useful-markdown-card.js?v=dfc268
+    type: js
 
 views:
-  - title: Example
+  - title: Home
+    icon: mdi:home
+    badges:
+      - sensor.living_room
+      - sensor.bedroom
+      - sensor.outside
+      - sensor.garage_temperature
     cards:
-      - type: weather-forecast
-        entity: weather.smhi_home
       - type: vertical-stack
         cards:
-        - type: horizontal-stack
-          cards:
+          - type: horizontal-stack
+            cards:
             - type: custom:button-card
+              color: var(--state-icon-active-color)
+              color_off: var(--state-icon-color)
               entity: switch.downstair_lights
-              icon: mdi:lamp
-              name: Down
-              size: 20px
+              icon: mdi:arrow-down-bold
+              size: 40px
             - type: custom:button-card
+              color: var(--state-icon-active-color)
+              color_off: var(--state-icon-color)
               entity: switch.upstair_lights
-              icon: mdi:lamp
-              name: Up
-              size: 20px
+              icon: mdi:arrow-up-bold
+              size: 40px
             - type: custom:button-card
+              color: var(--state-icon-active-color)
+              color_off: var(--state-icon-color)
               entity: switch.sonos_player
               icon: mdi:music-note
-              name: Sonos
-              size: 20px
+              size: 40px
+          - type: horizontal-stack
+            cards:
             - type: custom:button-card
-              entity: switch.television
+              color: var(--state-icon-active-color)
+              color_off: var(--state-icon-color)
+              entity: script.tv_scene
               icon: mdi:television-classic
-              name: TV Set
-              size: 20px
-        - type: horizontal-stack
-          cards:
+              size: 40px
             - type: custom:button-card
-              entity: script.tv_on_off
-              icon: mdi:television-box
-              name: TV
-              size: 20%
+              color: var(--state-icon-active-color)
+              color_off: var(--state-icon-color)
+              entity: script.cinema_scene
+              icon: mdi:projector
+              size: 40px
             - type: custom:button-card
-              entity: switch.receiver_hdmi2
-              icon: mdi:library-music
-              name: RXV HDMI2
-              size: 20%
-            - type: custom:button-card
-              entity: script.tv_set_hdmi1
-              icon: mdi:television
-              name: TV HDMI1
-              size: 20%
-      - type: glance
-        show_state: false
-        entities:
-          - weblink.couchpotato
-          - weblink.emby
-          - weblink.sonarr
-          - weblink.transmission
-      - type: custom:tracker-card
-        title:
-        trackers:
-          - sensor.custom_card_tracker
-          - sensor.custom_component_tracker
+              color: var(--state-icon-active-color)
+              color_off: var(--state-icon-color)
+              entity: script.off_scene
+              icon: mdi:weather-night
+              size: 40px
+          - type: glance
+            entities:
+              - entity: media_player.kok
+                name: Sonos
+              - entity: media_player.receiver
+                name: Receiver
+              - entity: media_player.tv
+                name: TV
+              - entity: switch.projector
+                name: Projector
+              - entity: cover.garage_door
+                name: Garage
       - type: entities
         entities:
           - type: custom:mini-media-player
             entity: media_player.kok
             name: Sonos
-            artwork: cover
             power_color: true
             hide_volume: false
             group: true
           - type: custom:mini-media-player
             entity: media_player.apple_tv
             name: Apple TV
-            artwork: cover
             power_color: true
             hide_volume: false
             show_progress: true
             group: true
-      - type: custom:swipe-card
-        card_width: '185px'
-        start_card: 2
-        parameters:
-          effect: 'coverflow'
-          grabCursor: true
-          centeredSlides: true
-          slidesPerView: 'auto'
-          coverflowEffect:
-            rotate: 50
-            stretch: 0
-            depth: 100
-            modifier: 1
-            slideShadows : true
-          pagination:
-            type: 'bullets'
+          - type: custom:mini-media-player
+            entity: media_player.receiver
+            name: Receiver
+            power_color: true
+            hide_volume: false
+            show_progress: true
+            group: true
+      - type: entities
+        title: Engine Heater
+        show_header_toggle: false
+        entities:
+          - switch.engine_heater
+          - input_boolean.engine_heater
+          - input_datetime.engine_heater
+          - input_number.engine_heater
+          - input_select.engine_heater
+      - type: 'custom:useful-markdown-card'
+        content: >
+          ### Monday
+
+          [[ food_planning.monday.state ]]
+
+          ### Tuesday
+
+          [[ food_planning.tuesday.state ]]
+
+          ### Wednesday
+
+          [[ food_planning.wednesday.state ]]
+
+          ### Thursday
+
+          [[ food_planning.thursday.state ]]
+
+          ### Friday
+
+          [[ food_planning.friday.state ]]
+
+          ### Saturday
+
+          [[ food_planning.saturday.state ]]
+
+          ### Sunday
+
+          [[ food_planning.sunday.state ]]
+
+      - type: 'custom:useful-markdown-card'
+        content: >
+          [![Emby](/local/icons/emby.png "Emby")](http://homer.lan:8096/web/index.html)
+          [![CouchPotato](/local/icons/couchpotato.png "CouchPotato")](http://homer.lan:5050)
+          [![Sonarr](/local/icons/sonarr.png "Sonarr")](http://homer.lan:8989/)
+          [![Sonarr](/local/icons/transmission.png "Transmission")](http://homer.lan:9091)
+
+  - title: Sensors
+    icon: mdi:thermometer
+    cards:
+      - type: markdown
+        content: >-
+          ## Temperatures
+      - type: "custom:mini-graph-card"
+        entity: sensor.living_room
+        height: 100
+        line_width: 4
+        font_size: 75
+        color: '#3498db'
+        hours_to_show: 48
+        labels: true
+      - type: horizontal-stack
         cards:
-          - type: sensor
-            entity: sensor.vardagsrum_temperature
-            name: Living Room
-            line_width: 8
-            line_color: '#FF6384'
-          - type: sensor
-            entity: sensor.sovrum_temperature
-            name: Bedroom
-            line_color: '#36A2EB'
-            line_width: 8
-          - type: sensor
-            entity: sensor.pannrum_temperature
-            name: Basement
-            line_color: '#ffce57'
-            line_width: 8
-          - type: sensor
-            entity: sensor.ute_temperature
-            name: Outside
-            line_color: "#4BC0C0"
-            accuracy: 8
-            line_width: 8
+        - type: "custom:mini-graph-card"
+          entity: sensor.storage
+          height: 100
+          line_width: 4
+          font_size: 75
+          color: '#8898db'
+          hours_to_show: 24
+          labels: true
+        - type: "custom:mini-graph-card"
+          entity: sensor.outside
+          height: 100
+          line_width: 4
+          font_size: 75
+          color: '#349800'
+          hours_to_show: 24
+          labels: true
+      - type: horizontal-stack
+        cards:
+        - type: "custom:mini-graph-card"
+          entity: sensor.garage_temperature
+          name: Garage
+          height: 100
+          line_width: 4
+          font_size: 75
+          color: '#8898db'
+          hours_to_show: 24
+          labels: true
+        - type: "custom:mini-graph-card"
+          entity: sensor.bedroom
+          height: 100
+          line_width: 4
+          font_size: 75
+          color: '#349800'
+          hours_to_show: 24
+          labels: true
+      - type: markdown
+        content: >-
+          ## People
+      - type: vertical-stack
+        cards:
+        - type: glance
+          title: Pierre
+          entities:
+            - entity: device_tracker.pierres_iphone
+              name: State
+            - entity: sensor.pierres_iphone_battery_level
+              name: Battery
+            - entity: sensor.pierres_iphone_battery_state
+              name: Charging
+        - type: map
+          default_zoom: 8
+          aspect_ratio: 50%
+          entities:
+            - device_tracker.pierres_iphone
+      - type: vertical-stack
+        cards:
+        - type: glance
+          title: Tove
+          entities:
+            - entity: device_tracker.toves_iphone
+              name: State
+            - entity: sensor.toves_iphone_battery_level
+              name: Battery
+            - entity: sensor.toves_iphone_battery_state
+              name: Charging
+        - type: map
+          default_zoom: 8
+          aspect_ratio: 50%
+          entities:
+            - device_tracker.toves_iphone
+
+  - title: Floorplan
+    icon: mdi:floor-plan
+    cards:
+      - type: markdown
+        content: >-
+          ## Downstairs
+      - type: picture-glance
+        image: /local/rooms/entrance.jpg
+        title: Entrance
+        entities:
+          - entity: switch.entrance_mirror_switch
+            icon: mdi:flower
+          - entity: switch.entrance_unused_switch
+            icon: mdi:help
+      - type: picture-glance
+        image: /local/rooms/livingroom.jpg
+        title: Living Room
+        entities:
+          - entity: switch.living_room_balls_switch
+            icon: mdi:balloon
+          - entity: switch.living_room_window
+            icon: mdi:window-maximize
+          - entity: switch.living_room_stars_switch
+            icon: mdi:door
+          - entity: switch.christmas_tree
+            icon: mdi:pine-tree
+          - cover.projector_screen
+      - type: picture-glance
+        image: /local/rooms/diningroom.jpg
+        title: Dining Room
+        entities:
+          - entity: switch.dining_room_locker_switch
+            icon: mdi:locker
+          - entity: switch.dining_room_vase_switch
+          - entity: switch.dining_room_window
+            icon: mdi:window-maximize
+      - type: picture-glance
+        image: /local/rooms/kitchen.jpg
+        title: Kitchen
+        entities:
+          - entity: switch.kitchen_window
+            icon: mdi:window-maximize
+      - type: picture-glance
+        image: /local/rooms/officejpg
+        title: Office
+        entities:
+          - entity: switch.office_window
+            icon: mdi:window-maximize
+          - entity: switch.office_christmas_tree
+            icon: mdi:pine-tree
+      - type: markdown
+        content: >-
+          ## Upstairs
+      - type: picture-glance
+        image: /local/rooms/upstairs.jpg
+        title: Upstairs
+        entities:
+          - entity: switch.pierre_bedroom
+            icon: mdi:lamp
+          - entity: switch.bedroom_window
+            icon: mdi:bed-empty
+          - entity: switch.tims_room
+            icon: mdi:baby
+          - entity: switch.guest_room
+            icon: mdi:hotel
+      - type: picture-glance
+        image: /local/rooms/basement.jpg
+        title: Basement
+        entities:
+          - entity: switch.outside
+            icon: mdi:tree
+          - entity: switch.engine_heater
+            icon: mdi:car
+          - cover.garage_door
+
+  - title: Monitor
+    icon: mdi:wrench
+    cards:
       - type: horizontal-stack
         cards:
           - type: gauge
@@ -140,10 +327,63 @@ views:
             entity: sensor.memory_free
           - type: gauge
             title: Disk
-            entity: sensor.disk_use_percent_
-      - type: custom:calendar-card
-        name: 'Calendar'
-        showProgressBar: false
-        numberOfDays: 30
+            entity: sensor.disk_use_percent
+      - type: glance
         entities:
-          - calendar.familj
+          - entity: sensor.ip_address
+          - entity: sensor.home_assistant_log
+            name: Log
+          - entity: sensor.home_assistant_v2_db
+            name: DB
+          - entity: sensor.process_mosquitto
+            name: Mosquitto
+      - type: glance
+        columns: 3
+        show_state: false
+        entities:
+          - entity: group.all_automations
+            name: Automations
+          - entity: group.all_devices
+            name: Devices
+          - entity: group.all_scripts
+            name: Scripts
+      - type: glance
+        title: Speedtest
+        entities:
+          - entity: sensor.speedtest_ping
+            name: Latency
+          - entity: sensor.speedtest_download
+            name: Down
+          - entity: sensor.speedtest_upload
+            name: Up
+      - type: glance
+        title: Transmission
+        entities:
+          - entity: sensor.transmission_status
+            name: Status
+          - entity: sensor.transmission_down_speed
+            name: Down
+          - entity: sensor.transmission_up_speed
+            name: Up
+      - type: glance
+        columns: 4
+        entities:
+          - device_tracker.broadlink
+          - device_tracker.garage_sensor
+          - device_tracker.ap
+          - device_tracker.apple_tv
+          - device_tracker.printer
+          - device_tracker.receiver
+          - device_tracker.rpi_old
+          - device_tracker.sonos
+          - device_tracker.server
+          - device_tracker.switch_kontor
+          - device_tracker.switch_utsikt
+          - device_tracker.switch_vardagsrum
+          - device_tracker.kitchen_motion
+          - device_tracker.bedroom_motion
+      - type: custom:tracker-card
+        title:
+        trackers:
+          - sensor.custom_card_tracker
+          - sensor.custom_component_tracker

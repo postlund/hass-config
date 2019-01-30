@@ -1,0 +1,54 @@
+rflink:
+  port: "/dev/serial/by-id/usb-Arduino__www.arduino.cc__0042_5543131343835161D0A0-if00"
+
+cover:
+  - platform: rflink
+    devices:
+      dooya_3a231f00_01:
+        name: Projector screen
+
+sensor:
+  - platform: rflink
+    automatic_add: true
+    devices:
+      fineoffset_0008_temp:
+        name: Outside
+        sensor_type: temperature
+      fineoffset_003d_temp:
+        name: Storage
+        sensor_type: temperature
+      fineoffset_003f_temp:
+        name: Bedroom
+        sensor_type: temperature
+      fineoffset_0076_temp:
+        name: Living room
+        sensor_type: temperature
+
+switch:
+  - platform: rflink
+    device_defaults:
+      signal_repetitions: 2
+    automatic_add: true
+    devices:
+      unitec_db0d_01:
+        name: Living room window
+      unitec_db0d_02:
+        name: Christmas tree
+      unitec_db0d_03:
+        name: Dining room window
+      unitec_db0d_04:
+        name: Office window
+      ab400d_12_4:
+        name: Outside
+      newkaku_00963054_1:
+        name: Kitchen window
+      newkaku_00493722_1:
+        name: Office christmas tree
+      newkaku_001b1832_1:
+        name: Guest room
+      newkaku_02aaa99a_1:
+        name: Tims room
+      newkaku_0310ec99_2:
+        name: Engine heater
+      newkaku_0310ec99_1:
+        name: Bedroom window

@@ -30,7 +30,7 @@ group:
   engine_heater:
     name: Engine Heater
     entities:
-      - switch.utomhus
+      - switch.engine_heater
       - input_boolean.engine_heater
       - input_datetime.engine_heater
       - input_number.engine_heater

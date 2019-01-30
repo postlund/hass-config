@@ -1,0 +1,66 @@
+esphomeyaml:
+  name: garage
+  platform: ESP8266
+  board: d1_mini
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+api:
+  password: !secret api_password
+
+logger:
+ota:
+web_server:
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: D6
+      inverted: True
+      mode: INPUT_PULLUP
+    name: "Garage Port Status"
+    device_class: garage_door
+    id: garage_door
+
+switch:
+  - platform: gpio
+    pin: D8
+    name: "Garage Door Switch"
+    id: garage_switch
+
+sensor:
+  - platform: wifi_signal
+    name: "WiFi Signal Sensor"
+    update_interval: 60s
+  - platform: dht
+    pin: D5
+    model: DHT22
+    temperature:
+      name: "Garage Temperature"
+    humidity:
+      name: "Garage Humidity"
+    update_interval: 15s
+
+cover:
+  - platform: template
+    id: garage_door_opener
+    name: "Garage Door"
+    lambda: >-
+      if (id(garage_door).state) {
+        return cover::COVER_OPEN;
+      } else {
+        return cover::COVER_CLOSED;
+      }
+    open_action:
+      - switch.turn_on: garage_switch
+      - delay: 0.1s
+      - switch.turn_off: garage_switch
+    close_action:
+      - switch.turn_on: garage_switch
+      - delay: 0.1s
+      - switch.turn_off: garage_switch
+    stop_action:
+      - switch.turn_off: garage_switch
+    optimistic: false

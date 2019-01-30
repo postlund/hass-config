@@ -1,117 +1,223 @@
-import Swiper from './js/swiper.min.js?v=1';
+const LitElement = Object.getPrototypeOf(customElements.get("ha-panel-lovelace"));
+const html = LitElement.prototype.html;
 
-class SwipeCard extends HTMLElement {
+const CUSTOM_TYPE_PREFIX = "custom:";
 
-    constructor() {
-        super();
-        // Make use of shadowRoot to avoid conflicts when reusing
-        this.attachShadow({ mode: 'open' });
+function deepcopy(value) {
+  if (!(!!value && typeof value == 'object')) {
+    return value;
+  }
+  if (Object.prototype.toString.call(value) == '[object Date]') {
+    return new Date(value.getTime());
+  }
+  if (Array.isArray(value)) {
+    return value.map(deepcopy);
+  }
+  var result = {};
+  Object.keys(value).forEach(
+    function(key) { result[key] = deepcopy(value[key]); });
+  return result;
+}
+
+const fireEvent = (
+  node,
+  type,
+  detail,
+  options
+) => {
+  options = options || {};
+  detail = detail === null || detail === undefined ? {} : detail;
+  const event = new Event(type, {
+    bubbles: options.bubbles === undefined ? true : options.bubbles,
+    cancelable: Boolean(options.cancelable),
+    composed: options.composed === undefined ? true : options.composed,
+  });
+  event.detail = detail;
+  node.dispatchEvent(event);
+  return event;
+};
+
+class SwipeCard extends LitElement {
+
+    static get properties() {
+        return {
+            _config: {},
+            _cards: {},
+            _hass: {},
+        };
+    }
+
+    setConfig(config) {
+        if (!config || !config.cards || !Array.isArray(config.cards)) {
+            throw new Error("Card config incorrect");
+        }
+        this._config = deepcopy(config);
+        this._parameters = this._config.parameters || {};
+        this._cards = this._config.cards.map((card) => {
+            const element = this._createCardElement(card);
+            return element;
+        });
     }
 
     set hass(hass) {
-        if (!this.swiper) {
-            this.createSwiper(hass);
-        } else {
-            this._cards.forEach(item => {
-                item.hass = hass;
-            });
+        this._hass = hass;
 
+        if (!this._cards) {
+            return;
+        }
+
+        for (const element of this._cards) {
+            element.hass = this._hass;
+        }
+    }
+
+    connectedCallback() {
+        super.connectedCallback();
+        if (this._config && this._hass && this._updated && !this._loaded) {
+            this._initialLoad();
+        } else if (this.swiper) {
             this.swiper.update();
         }
     }
 
-    createSwiper(hass) {
-        const card = document.createElement('div');
+    updated(changedProperties) {
+      super.updated(changedProperties);
+      this._updated = true;
+      if (this._config && this._hass && this.isConnected && !this._loaded) {
+        this._initialLoad();
+      } else if (this.swiper) {
+        this.swiper.update();
+      }
+    }
+
+    render() {
+        if (!this._config || !this._hass) {
+            return html ``;
+        }
+
+        return html `
+            <div class="swiper-container" dir="${(this._hass.translationMetadata.translations[this._hass.selectedLanguage || this._hass.language].isRTL || false) ? "rtl" : "ltr"}">
+              <div class="swiper-wrapper">
+                ${this._cards}
+              </div>
+              ${ "pagination" in this._parameters ? html`<div class="swiper-pagination"></div>` : "" }
+              ${ "navigation" in this._parameters ? html`<div class="swiper-button-next"></div><div class="swiper-button-prev"></div>` : "" }
+              ${ "scrollbar" in this._parameters ? html`<div class="swiper-scrollbar"></div>` : "" }
+            </div>
+    		`;
+    }
+
+    async _initialLoad() {
+        this._loaded = true;
+        
+        const path = this._config.path ? this._config.path : "https://cdn.jsdelivr.net/gh/bramkragten/custom-ui@master/swipe-card/";
+        
+		const swiperMod = await import(`${path}/js/swiper.min.js`);
+		const Swiper = swiperMod.default;
+
         const link = document.createElement('link');
         link.type = 'text/css';
         link.rel = 'stylesheet';
-        link.href = '/local/custom-lovelace/swipe-card/css/swiper.min.css?v=8';
+        link.href = `${path}/css/swiper.min.css`;
+        this.shadowRoot.appendChild(link);
 
-        card.appendChild(link);
-        this.container = document.createElement('div');
-        this.container.className = 'swiper-container';
+        await this.updateComplete;
 
-        this.content = document.createElement('div');
-        this.content.className = 'swiper-wrapper';
-        this.container.appendChild(this.content);
-
-        if ('navigation' in this.parameters) {
-            if (this.parameters.navigation === null) {
-                this.parameters.navigation = {};
+        if ('pagination' in this._parameters) {
+            if (this._parameters.pagination === null) {
+                this._parameters.pagination = {};
             }
-
-            const nextbtn = document.createElement('div');
-            nextbtn.className = 'swiper-button-next';
-            this.container.appendChild(nextbtn);
-            this.parameters.navigation.nextEl = nextbtn;
-
-            const prevbtn = document.createElement('div');
-            prevbtn.className = 'swiper-button-prev';
-            this.container.appendChild(prevbtn);
-            this.parameters.navigation.prevEl = prevbtn;
+            this._parameters.pagination.el = this.shadowRoot.querySelector(".swiper-pagination");
         }
 
-        if ('scrollbar' in this.parameters) {
-            if (this.parameters.scrollbar === null) {
-                this.parameters.scrollbar = {};
+        if ('navigation' in this._parameters) {
+            if (this._parameters.navigation === null) {
+                this._parameters.navigation = {};
             }
-
-            this.scrollbar = document.createElement('div');
-            this.scrollbar.className = 'swiper-scrollbar';
-            this.container.appendChild(this.scrollbar);
-            this.parameters.scrollbar.el = this.scrollbar;
+            this._parameters.navigation.nextEl = this.shadowRoot.querySelector(".swiper-button-next");
+            this._parameters.navigation.prevEl = this.shadowRoot.querySelector(".swiper-button-prev");
         }
 
-        if ('pagination' in this.parameters) {
-            if (this.parameters.pagination === null) {
-                this.parameters.pagination = {};
+        if ('scrollbar' in this._parameters) {
+            if (this._parameters.scrollbar === null) {
+                this._parameters.scrollbar = {};
             }
-
-            this.pagination = document.createElement('div');
-            this.pagination.className = 'swiper-pagination';
-            this.container.appendChild(this.pagination);
-            this.parameters.pagination.el = this.pagination;
+            this._parameters.scrollbar.el = this.shadowRoot.querySelector(".swiper-scrollbar");
         }
 
-        card.appendChild(this.container);
-        this.shadowRoot.appendChild(card);
-
-        this._cards = this.config.cards.map(item => {
-            const div = document.createElement('div');
-            let element;
-            if (item.type.startsWith("custom:")) {
-                element = document.createElement(`${item.type.substr("custom:".length)}`);
-            } else {
-                element = document.createElement(`hui-${item.type}-card`);
-            }
-            element.setConfig(item);
-            if (this._hass) element.hass = hass;
-            element.className = 'swiper-slide';
-            if ('card_width' in this.config) {
-                element.style.width = this.config.card_width;
-            }
-            this.content.appendChild(element);
-            return element;
-        });
-
-        if ('start_card' in this.config) {
-          const start_card = this.config.start_card -1;
-          this.parameters.on = {
-            init: function () {
-              this.slideTo(start_card);
-            },
-          };
+        if ('start_card' in this._config) {
+            this._parameters.initialSlide = this._config.start_card - 1;
         }
-
-        this.swiper = new Swiper(this.container, this.parameters);
-
+        
+        this.swiper = new Swiper(this.shadowRoot.querySelector(".swiper-container"), this._parameters);
     }
 
-    setConfig(config) {
-        this.config = config;
-        this.title = config.title || '';
+    _createCardElement(cardConfig) {
+        let element;
+        let errorConfig;
+        if (cardConfig.type.startsWith(CUSTOM_TYPE_PREFIX)) {
+            const tag = cardConfig.type.substr(CUSTOM_TYPE_PREFIX.length);
 
-        this.parameters = config.parameters || {};
+            if (customElements.get(tag)) {
+                element = document.createElement(`${tag}`);
+            } else {
+                errorConfig = {
+                  type: "error",
+                  error: `Custom element doesn't exist: ${tag}.`,
+                  cardConfig,
+                }
+                element = document.createElement("hui-error-card");
+                element.style.display = "None";
+                const timer = window.setTimeout(() => {
+                  element.style.display = "";
+                }, 5000);
+
+                customElements.whenDefined(tag).then(() => {
+                  clearTimeout(timer);
+                  //HA >= 0.86
+                  fireEvent(element, "ll-rebuild");
+                  //HA < 0.86
+                  fireEvent(element, "rebuild-view");
+                });
+            }
+        } else {
+            element = document.createElement(`hui-${cardConfig.type}-card`);
+        }
+
+        element.className = 'swiper-slide';
+
+        if ('card_width' in this._config) {
+            element.style.width = this._config.card_width;
+        }
+
+        if (errorConfig) {
+            element.setConfig(errorConfig);
+        } else {
+            element.setConfig(cardConfig);
+        }
+
+        if (this._hass) {
+            element.hass = this._hass;
+        }
+        element.addEventListener(
+            "ll-rebuild",
+            (ev) => {
+                ev.stopPropagation();
+                this._rebuildCard(element, cardConfig);
+            }, {
+                once: true
+            }
+        );
+        return element;
+    }
+
+    _rebuildCard(
+        element,
+        config
+    ) {
+        const newCard = this._createCardElement(config);
+        element.replaceWith(newCard);
+        this._cards.splice(this._cards.indexOf(element), 1, newCard);
     }
 
     getCardSize() {

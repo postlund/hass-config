@@ -1,9 +1,0 @@
-history_graph:
-  temps:
-    refresh: 60
-    name: Temperatures
-    entities:
-      - sensor.pannrum_temperature
-      - sensor.sovrum_temperature
-      - sensor.ute_temperature
-      - sensor.vardagsrum_temperature

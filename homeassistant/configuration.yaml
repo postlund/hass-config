@@ -7,7 +7,7 @@ homeassistant:
   time_zone: Europe/Stockholm
   whitelist_external_dirs:
     - /hass/
-
+    - /home/homeassistant/
   packages: !include_dir_named packages
 
 automation: !include automations.yaml
@@ -43,6 +43,7 @@ frontend:
     - /local/custom_ui/state-card-tiles_es5.html
     - /local/custom_ui/state-card-food-planning_es5.html
 
+python_script:
 conversation:
 history:
 recorder:
@@ -57,17 +58,105 @@ http:
   ssl_certificate: !secret hass_ssl_certificate
   ssl_key: !secret hass_ssl_key
 
+lirc:
+lovelace:
+  mode: yaml
 custom_updater:
+  show_installable: false
+  track:
+    - components
+    - cards
+    - python_scripts
   card_urls:
-    - https://raw.githubusercontent.com/kalkih/mini-media-player/master/tracker.json
     - https://raw.githubusercontent.com/kalkih/mini-media-player/master/tracker.json
     - https://raw.githubusercontent.com/kuuji/button-card/master/tracker.json
     - https://raw.githubusercontent.com/bramkragten/custom-ui/master/updater.json
     - https://raw.githubusercontent.com/rdehuyss/homeassistant-lovelace-google-calendar-card/master/custom_updater.json
+    - https://raw.githubusercontent.com/kalkih/mini-graph-card/master/tracker.json
 homekit:
+  name: Hemma
+  ip_address: !secret hass_ip
+  port: 51888
+  filter:
+    include_domains:
+      - switch
+      - sensor
+      - binary_sensor
+      - media_player
+      - cover
+    exclude_domains:
+      - automation
+      - device_tracker
+      - input_select
+      - input_boolean
+      - script
+    exclude_entities:
+      - switch.garage_door_switch
+      - binary_sensor.garage_port_status
+      - binary_sensor.photoresistor
+      - switch.receiver_output
+      - binary_sensor.sonoff_basic_button
+      - switch.sonoff_basic_relay
+      - switch.sonos_player
+  entity_config:
+    cover.garage_door:
+      name: Garageporten
+    media_player.apple_tv:
+      feature_list:
+        feature: play_pause
+    sensor.storage:
+      name: Pannrummet
+    sensor.outside:
+      name: Utomhus
+    sensor.living_room:
+      name: Vardagsrummet
+    sensor.bedroom:
+      name: Sovrummet
+    media_player.kok:
+      name: Köksmusiken
+      feature_list:
+        feature: play_pause
+    switch.tims_room:
+      name: Tims rum
+    switch.bedroom_window:
+      name: Sovrumsfönstret
+    switch.christmas_tree:
+      name: Julgranen
+    switch.cinema:
+      name: Bio
+    switch.dining_room_window:
+      name: Fönstret i matrummet
+    switch.television:
+      name: TV
+    switch.projector:
+      name: Projektorn
+    cover.projector_screen:
+      name: Projektorduken
+    switch.pierre_bedroom:
+      name: Sänglampan
+    switch.outside:
+      name: Utomhusbelysning
+    switch.office_window:
+      name: Kontorsfönstret
+    switch.office_christmas_tree:
+      name: Jumgranen på kontoret
+    switch.living_room_window:
+      name: Vardagsrumsfönstret
+    switch.kitchen_window:
+      name: Köksfönstret
+    switch.guest_room:
+      name: Gästrummet
+    sensor.garage_temperature:
+      name: Garaget
+    switch.engine_heater:
+      name: Motorvärmaren
+    switch.downstair_lights:
+      name: Nere
+    switch.upstair_lights:
+      name: Uppe
 alexa:
 zwave:
-    usb_path: /dev/ttyACM0
+    usb_path: "/dev/serial/by-id/usb-0658_0200-if00"
     device_config: !include zwave_device_config.yaml
     config_path: /home/homeassistant/.homeassistant/config
 
@@ -94,18 +183,15 @@ notify:
     services:
       - service: ios_pierres_iphone
 
-sensor:
-  - platform: yr
-    monitored_conditions:
-      - temperature
-      - symbol
-      - windSpeed
-      - humidity
-
 switch:
   - platform: broadlink
     host: !secret broadlink_host
     mac: !secret broadlink_mac
+    switches:
+      projector:
+        friendly_name: Projector
+        command_on: "JgDYAAABKZIWDhYPEhISEhMQFQ8WDhYPFg4WDhYOFg4WMhYzFg4WDhYyFjMSNRYyFg8WDhYyFg4WDhUPFg8TERYyFjIWDhYyFgAFgAABJpUVDxUPFQ8VDxUPFRAVDxISExETEBUPFBEVMxUzFQ8VDxU0FTMVMxU0EhEVDxUzFQ8UERUPFBAUEBUzFTQVDxUzFQAFgAABKJMVDxQQFBAVEBMRExEUEBQQFBAUEBQRExEVMhQ0FRAWDhQ0FDQUNRM1FQ8UEBUzExEUEBQQFBAUEBQ1EzUUEBQ0FQANBQ=="
+        command_off: "JgDYAAABKJIVEBUPFQ8WDhUPFBAVEBMRFQ8VDxUPFQ8VNBQ0FQ8TERMREzUVMxUzFQ8VEBUzFQ8UNBcOExEVDxM0FTMVEBUzFQAFgAABKZMSEhMQFQ8VDxQRFQ8VDxUPFQ8VDxUPFRATNRUzFQ8VEBUPFTMTNBU0FQ8VDxUzFQ8VNBUPFBAUEBUzFTQSEhM0FQAFgQABJ5QUEBQQFBETERISExETEBQQFBETERMRFBAUNBQ1ExEUEBQQFDQUNRM1ExAUEBQ1ExETNRQQFBAUERM1FDQUEBQ0EwANBQ=="
 
 apple_tv:
   - host: !secret atv_ip
@@ -135,3 +221,12 @@ emulated_hue:
     - media_player
     - script
 
+media_player:
+  - platform: yamaha
+    name: Receiver
+    zone_ignore:
+      - Zone_2
+  - platform: emby
+    host: !secret emby_host
+    api_key: !secret emby_key
+  - platform: tv_cec

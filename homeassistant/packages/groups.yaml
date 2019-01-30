@@ -1,0 +1,79 @@
+homeassistant:
+
+  customize:
+    group.all_automations:
+      hidden: false
+
+    group.all_scripts:
+      hidden: false
+
+    switch.living_room_balls_switch:
+      friendly_name: Living room balls
+    switch.entrance_mirror_switch:
+      friendly_name: Mirror
+    switch.living_room_stars_switch:
+      friendly_name: Living room stars
+    switch.entrance_unused_switch:
+      friendly_name: Entrance
+    switch.dining_room_locker_switch:
+      friendly_name: Dining room locker
+    switch.dining_room_vase_switch:
+      friendly_name: Dining room vase
+
+    device_tracker.ap:
+      icon: mdi:access-point-network
+    device_tracker.apple_tv:
+      icon: mdi:airplay
+    device_tracker.printer:
+      icon: mdi:printer
+    device_tracker.receiver:
+      icon: mdi:music-box
+    device_tracker.rpi_old:
+      icon: mdi:raspberrypi
+    device_tracker.server:
+      icon: mdi:server-network
+    device_tracker.switch_kontor:
+      icon: mdi:switch
+    device_tracker.switch_utsikt:
+      icon: mdi:switch
+    device_tracker.switch_vardagsrum:
+      icon: mdi:switch
+    device_tracker.kitchen_motion:
+      icon: mdi:run
+    device_tracker.bedroom_motion:
+      icon: mdi:run
+
+group:
+
+  downstair_lights:
+    name: All lights downstairs
+    entities:
+      - switch.entrance_mirror_switch
+      - switch.entrance_unused_switch
+      - switch.living_room_balls_switch
+      - switch.living_room_stars_switch
+      - switch.dining_room_locker_switch
+      - switch.dining_room_vase_switch
+      - switch.dining_room_window
+      - switch.office_window
+      - switch.kitchen_window
+      - switch.outside
+      - switch.office_christmas_tree
+      - switch.christmas_tree
+      - switch.living_room_window
+
+  upstair_lights:
+    name: Upstair lights
+    entities:
+      - switch.guest_room
+      - switch.tims_room
+
+  # Lights that should be turned off when entering cinema scene
+  cinema_lights:
+    name: Cinema lights
+    entities:
+      - switch.dining_room_window
+      - switch.christmas_tree
+      - switch.living_room_window
+      - switch.living_room_balls_switch
+      - switch.living_room_stars_switch

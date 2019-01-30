@@ -1,0 +1,12 @@
+alert:
+  garage_door:
+    name: Garage is open
+    done_message: Garage is closed
+    entity_id: cover.garage_door
+    state: 'open'
+    repeat: 30
+    can_acknowledge: true
+    skip_first: true
+    notifiers:
+      - ios_pierres_iphone
+

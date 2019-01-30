@@ -1,8 +1,0 @@
-input_boolean:
-  pierre_bedroom_run_today:
-    name: Turn on Pierres bedroom lamp automation has run today
-
-sensor:
-  - platform: command_line
-    name: Log size
-    command: "ls -s /home/homeassistant/.homeassistant/home-assistant.log | cut -f 1 -d ' '"

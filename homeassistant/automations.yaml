@@ -1,35 +1,5 @@
-- id: '1'
-  alias: Reset pierre_bedroom_run_today
-  trigger:
-    platform: time
-    at: '08:00:00'
-  action:
-    service: input_boolean.turn_off
-    entity_id: input_boolean.pierre_bedroom_run_today
-
-- id: '2'
-  alias: Turn on bedroom lamp when someone enters the room
-  trigger:
-    platform: state
-    entity_id: binary_sensor.bedroom_sensor
-    from: 'off'
-  condition:
-    - condition: state
-      entity_id: input_boolean.pierre_bedroom_run_today
-      state: 'off'
-    - condition: state
-      entity_id: group.family
-      state: home
-    - condition: time
-      after: '21:30:00'
-  action:
-    - service: input_boolean.turn_on
-      entity_id: input_boolean.pierre_bedroom_run_today
-    - service: switch.turn_on
-      entity_id: switch.pierre_bedroom
-
 - id: '3'
-  alias: Turn on evening lights
+  alias: Evening lights
   trigger:
     - platform: sun
       event: sunset
@@ -54,7 +24,7 @@
   action:
     service: notify.system
     data_template:
-      message: 'Home Assistant has started (IP: {{ states.sensor.ipaddress.state }})'
+      message: 'Home Assistant has started (IP: {{ states.sensor.ip_address.state }})'
       title: System Notification
 
 - id: '5'
@@ -72,7 +42,7 @@
         title: System Notification
 
 - id: '6'
-  alias: Process down
+  alias: Process monitoring
   trigger:
     platform: state
     entity_id:
@@ -85,7 +55,7 @@
       title: System Notification
 
 - id: '7'
-  alias: Turn on engine pre-heater
+  alias: Engine pre-heater
   trigger:
     - platform: template
       value_template: "{{ states('sensor.time') == (states.input_datetime.engine_heater.attributes.timestamp | int | timestamp_custom('%H:%M', False)) }}"
@@ -95,11 +65,11 @@
       state: 'on'
   action:
     - service: switch.turn_on
-      entity_id: switch.utomhus
+      entity_id: switch.engine_heater
     - service: switch.turn_on
-      entity_id: switch.utomhus
+      entity_id: switch.engine_heater
     - service: switch.turn_on
-      entity_id: switch.utomhus
+      entity_id: switch.engine
     - service_template: >
         {% if is_state('input_select.engine_heater', 'Pierre') %}
           notify.ios_pierres_iphone
@@ -113,7 +83,7 @@
         message: Turned ON engine heater!
 
 - id: '8'
-  alias: Automatic engine pre-heater turn off
+  alias: Engine pre-heater auto-off
   trigger:
     - platform: template
       value_template: >
@@ -122,4 +92,4 @@
         {{ states('sensor.time') == ((start + delay * 60) | timestamp_custom('%H:%M', False)) }}
   action:
     - service: switch.turn_off
-      entity_id: switch.utomhus
+      entity_id: switch.engine_heater

@@ -10,6 +10,7 @@ https://github.com/custom-cards/upcoming-media-card
 import logging
 import json
 import time
+import requests
 from datetime import date, datetime
 import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
@@ -17,7 +18,7 @@ from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.const import CONF_API_KEY, CONF_HOST, CONF_PORT, CONF_SSL
 from homeassistant.helpers.entity import Entity
 
-__version__ = '0.1.4'
+__version__ = '0.1.6'
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -135,7 +136,6 @@ class SonarrUpcomingMediaSensor(Entity):
         return attributes
 
     def update(self):
-        import requests
         start = get_date(self._tz)
         end = get_date(self._tz, self.days)
         try:

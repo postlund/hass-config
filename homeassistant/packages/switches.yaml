@@ -3,10 +3,6 @@ switch:
     name: Pierre Bedroom
     command_topic: cmnd/pierre_bedroom/power
     state_topic: stat/pierre_bedroom/POWER
-  - platform: mqtt
-    name: mailbox
-    command_topic: sensor/mailBox
-    state_topic: sensor/mailBox
   - platform: template
     switches:
       downstair_lights:
