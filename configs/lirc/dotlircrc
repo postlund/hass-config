@@ -1,0 +1,12 @@
+begin
+    remote = atv
+    button = KEY_VOLUMEUP
+    prog   = home-assistant
+    config = KEY_VOLUMEUP
+end
+begin
+    remote = atv
+    button = KEY_VOLUMEDOWN
+    prog   = home-assistant
+    config = KEY_VOLUMEDOWN
+end

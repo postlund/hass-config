@@ -21,3 +21,6 @@ zwscene.xml
 tellduslive.conf
 creds.dat
 client_secrets.json
+ip_bans.yaml
+.storage
+.homekit.state

@@ -1,9 +1,0 @@
-#binary_sensor:
-  # - platform: dlink_motion_sensor
-  #   name: Kitchen sensor
-  #   host: !secret motion_kitchen_host
-  #   password: !secret motion_kitchen_password
-  # - platform: dlink_motion_sensor
-  #   name: Bedroom sensor
-  #   host: !secret motion_bedroom_host
-  #   password: !secret motion_bedroom_password

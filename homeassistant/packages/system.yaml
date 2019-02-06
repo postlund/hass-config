@@ -1,15 +1,12 @@
-automation:
-  - alias: Process down
-    trigger:
-      platform: state
-      entity_id:
-        - sensor.process_mosquitto
-    action:
-      service: notify.system
-      data_template:
-        message: >
-          {{ trigger.entity_id.split('.')[1] }} is {{ trigger.to_state.state.lower() }}
-        title: System Notification
+homeassistant:
+
+  customize:
+    sensor.speedtest_download:
+      icon: mdi:download
+    sensor.speedtest_upload:
+      icon: mdi:upload
+    sensor.speedtest_ping:
+      icon: mdi:timer
 
 sensor:
   - platform: systemmonitor
@@ -23,3 +20,18 @@ sensor:
   - platform: time_date
   - platform: dnsip
     name: IP-Address
+  - platform: filesize
+    file_paths:
+      - /home/homeassistant/.homeassistant/home-assistant.log
+      - /home/homeassistant/.homeassistant/home-assistant_v2.db
+  - platform: speedtest
+    minute: 30
+    hour:
+      - 0
+      - 6
+      - 12
+      - 18
+    monitored_conditions:
+      - ping
+      - download
+      - upload

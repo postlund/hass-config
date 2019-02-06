@@ -1,0 +1,4 @@
+More or less like this:
+
+  cp atv.lircd.conf to /etc/lirc/lircd.conf.d
+  cp dotlircrc ~/.lircrc
