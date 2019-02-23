@@ -24,14 +24,24 @@ sensor:
     file_paths:
       - /home/homeassistant/.homeassistant/home-assistant.log
       - /home/homeassistant/.homeassistant/home-assistant_v2.db
-  - platform: speedtest
-    minute: 30
-    hour:
-      - 0
-      - 6
-      - 12
-      - 18
-    monitored_conditions:
-      - ping
-      - download
-      - upload
+
+speedtestdotnet:
+  scan_interval:
+    hours: 4
+  monitored_conditions:
+    - ping
+    - download
+    - upload
+
+folder_watcher:
+  - folder: /home/homeassistant/.homeassistant/themes
+    patterns:
+      - '*.yaml'
+
+automation:
+  alias: Reload themes
+  trigger:
+    platform: event
+    event_type: folder_watcher
+  action:
+    service: frontend.reload_themes

@@ -27,6 +27,8 @@
     "121": "media_player.emby_emby_mobile_web_browser_iphone",
     "122": "media_player.emby_tvos_vardagsrum",
     "123": "switch.tims_room",
+    "124": "script.p3",
+    "125": "switch.photoresistor_debug",
     "13": "input_boolean.perform_speedtest",
     "14": "group.all_covers",
     "15": "group.all_automations",

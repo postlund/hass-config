@@ -12,6 +12,7 @@ homeassistant:
 
 automation: !include automations.yaml
 
+default_config:
 calendar:
   - platform: caldav
     username: !secret icloud_username
@@ -30,7 +31,6 @@ logbook:
 
 logger:
   default: warn
-map:
 ios:
 config:
 frontend:
@@ -43,13 +43,18 @@ frontend:
     - /local/custom_ui/state-card-tiles_es5.html
     - /local/custom_ui/state-card-food-planning_es5.html
 
+discovery:
+  ignore:
+    - esphome
 python_script:
-conversation:
-history:
 recorder:
   purge_interval: 3
   purge_keep_days: 2
-sun:
+  exclude:
+    entities:
+      - sun.sun
+      - sensor.time
+      - sensor.date
 http:
   server_port: 8123
   ip_ban_enabled: true
@@ -84,6 +89,8 @@ homekit:
       - binary_sensor
       - media_player
       - cover
+    include_entities:
+      - script.p3
     exclude_domains:
       - automation
       - device_tracker
@@ -113,7 +120,7 @@ homekit:
     sensor.bedroom:
       name: Sovrummet
     media_player.kok:
-      name: Köksmusiken
+      name: Sonos
       feature_list:
         feature: play_pause
     switch.tims_room:

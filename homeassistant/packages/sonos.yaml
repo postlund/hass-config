@@ -22,6 +22,14 @@ switch:
           entity_id: media_player.kok
 
 script:
+  p3:
+    alias: P3
+    sequence:
+      - service: media_player.select_source
+        entity_id: media_player.kok
+        data:
+          source: 'P3 99.3 (Populärmusik)'
+
   sonos_say:
     alias: "Sonos TTS script"
     sequence:

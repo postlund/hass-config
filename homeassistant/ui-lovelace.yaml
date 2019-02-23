@@ -1,11 +1,11 @@
 title: Home Sweet Home
 
 resources:
-  - url: /local/tracker-card.js?v=0.3.0
+  - url: /local/tracker-card.js?v=1.0.0
     type: js
-  - url: /local/mini-media-player-bundle.js?v=0.9.8
+  - url: /local/mini-media-player-bundle.js?v=1.0.2
     type: module
-  - url: /local/button-card.js?v=0.0.5
+  - url: /local/button-card.js?v=0.0.5a
     type: module
   - url: /local/custom-lovelace/swipe-card/swipe-card.js?v=2.0.0
     type: module
@@ -15,14 +15,17 @@ resources:
     type: js
   - url: /local/custom_ui/calendar-card/calendar-card.js?v=1.0.1
     type: module
-  - url: /local/mini-graph-card-bundle.js?v=0.2.1
+  - url: /local/mini-graph-card-bundle.js?v=0.3.0
     type: js
-  - url: /local/useful-markdown-card.js?v=dfc268
+  - url: /local/useful-markdown-card.js?v=9377d8
+    type: js
+  - url: /local/card-tools.js?v=deb8e3
     type: js
 
 views:
   - title: Home
     icon: mdi:home
+    background: center / cover no-repeat url("/local/background.jpg") fixed
     badges:
       - sensor.living_room
       - sensor.bedroom
@@ -150,15 +153,14 @@ views:
           [![CouchPotato](/local/icons/couchpotato.png "CouchPotato")](http://homer.lan:5050)
           [![Sonarr](/local/icons/sonarr.png "Sonarr")](http://homer.lan:8989/)
           [![Sonarr](/local/icons/transmission.png "Transmission")](http://homer.lan:9091)
-
+  
   - title: Sensors
     icon: mdi:thermometer
+    background: center / cover no-repeat url("/local/background.jpg") fixed
     cards:
-      - type: markdown
-        content: >-
-          ## Temperatures
       - type: "custom:mini-graph-card"
-        entity: sensor.living_room
+        entities:
+          - sensor.living_room
         height: 100
         line_width: 4
         font_size: 75
@@ -168,7 +170,8 @@ views:
       - type: horizontal-stack
         cards:
         - type: "custom:mini-graph-card"
-          entity: sensor.storage
+          entities:
+            - sensor.storage
           height: 100
           line_width: 4
           font_size: 75
@@ -176,7 +179,8 @@ views:
           hours_to_show: 24
           labels: true
         - type: "custom:mini-graph-card"
-          entity: sensor.outside
+          entities:
+            - sensor.outside
           height: 100
           line_width: 4
           font_size: 75
@@ -186,7 +190,8 @@ views:
       - type: horizontal-stack
         cards:
         - type: "custom:mini-graph-card"
-          entity: sensor.garage_temperature
+          entities:
+            - sensor.garage_temperature
           name: Garage
           height: 100
           line_width: 4
@@ -195,16 +200,23 @@ views:
           hours_to_show: 24
           labels: true
         - type: "custom:mini-graph-card"
-          entity: sensor.bedroom
+          entities:
+            - sensor.bedroom
           height: 100
           line_width: 4
           font_size: 75
           color: '#349800'
           hours_to_show: 24
           labels: true
-      - type: markdown
-        content: >-
-          ## People
+      - type: "custom:mini-graph-card"
+        entities:
+          - sensor.energy_daily
+        height: 100
+        line_width: 4
+        font_size: 75
+        color: '#3498db'
+        hours_to_show: 6
+        labels: true
       - type: vertical-stack
         cards:
         - type: glance
@@ -240,10 +252,8 @@ views:
 
   - title: Floorplan
     icon: mdi:floor-plan
+    background: center / cover no-repeat url("/local/background.jpg") fixed
     cards:
-      - type: markdown
-        content: >-
-          ## Downstairs
       - type: picture-glance
         image: /local/rooms/entrance.jpg
         title: Entrance
@@ -288,9 +298,6 @@ views:
             icon: mdi:window-maximize
           - entity: switch.office_christmas_tree
             icon: mdi:pine-tree
-      - type: markdown
-        content: >-
-          ## Upstairs
       - type: picture-glance
         image: /local/rooms/upstairs.jpg
         title: Upstairs
@@ -315,6 +322,7 @@ views:
 
   - title: Monitor
     icon: mdi:wrench
+    background: center / cover no-repeat url("/local/background.jpg") fixed
     cards:
       - type: horizontal-stack
         cards:

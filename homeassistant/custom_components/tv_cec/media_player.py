@@ -13,9 +13,9 @@ No support is given.
 import logging
 
 from homeassistant.components import hdmi_cec
-from homeassistant.components.media_player import (
-    MediaPlayerDevice, SUPPORT_SELECT_SOURCE,
-    SUPPORT_TURN_OFF, SUPPORT_TURN_ON)
+from homeassistant.components.media_player import MediaPlayerDevice
+from homeassistant.components.media_player.const import (
+    SUPPORT_SELECT_SOURCE, SUPPORT_TURN_OFF, SUPPORT_TURN_ON)
 from homeassistant.const import (STATE_PLAYING, STATE_OFF)
 from homeassistant.exceptions import PlatformNotReady
 
