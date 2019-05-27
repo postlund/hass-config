@@ -1,6 +1,6 @@
 clear:
   # My changes to original "clear" theme
-  ha-card-border-radius: 2px
+  ha-card-border-radius: px
   label-badge-red: '#8cccb6'
   primary-color: '#03a9f4'
 
@@ -12,7 +12,7 @@ clear:
   background-color-2: '#F4F5F6'                                                   # Light grey background
   background-card-color: 'rgba(255,255,255,1.0)'                                  # White background
   border-color: '#EAEAEA'                                                         # Light grey border
-
+  
   # Header
   #primary-color: 'var(--text-color)'                                              # Background
   text-primary-color: '#FFF'                                                      # Text

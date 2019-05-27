@@ -4,3 +4,8 @@ zone:
     longitude: !secret zone_pierre_workplace_lon
     radius: 150
     icon: mdi:worker
+  - name: City Gross Mantorp
+    latitude: !secret zone_city_gross_lat
+    longitude: !secret zone_city_gross_lon
+    radius: 200
+    icon: mdi:store

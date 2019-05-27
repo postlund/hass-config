@@ -1,0 +1,118 @@
+input_boolean:
+  water_monday:
+    name: Monday
+    icon: mdi:calendar-blank
+  water_tuesday:
+    name: Tuesday
+    icon: mdi:calendar-blank
+  water_wednesday:
+    name: Wednesday
+    icon: mdi:calendar-blank
+  water_thursday:
+    name: Thursday
+    icon: mdi:calendar-blank
+  water_friday:
+    name: Friday
+    icon: mdi:calendar-blank
+  water_saturday:
+    name: Saturday
+    icon: mdi:calendar-blank
+  water_sunday:
+    name: Sunday
+    icon: mdi:calendar-blank
+
+input_datetime:
+  water_time:
+    name: Scheduled Watering Time
+    has_date: false
+    has_time: true
+
+input_number:
+  zone1_runtime:
+    name: Zone 1
+    min: 0
+    max: 600
+    unit_of_measurement: seconds
+    icon: mdi:water
+
+  zone2_runtime:
+    name: Zone 2
+    min: 0
+    max: 600
+    unit_of_measurement: seconds
+    icon: mdi:water
+
+  zone3_runtime:
+    name: Zone 3
+    min: 0
+    max: 600
+    unit_of_measurement: seconds
+    icon: mdi:water
+
+  zone4_runtime:
+    name: Zone 4
+    min: 0
+    max: 600
+    unit_of_measurement: seconds
+    icon: mdi:water
+
+sensor:
+  - platform: template
+    sensors:
+      watering_last_started:
+        friendly_name: Last Started
+        entity_id: switch.start_watering
+        value_template: >-
+          {% if states('switch.start_watering') == 'on' %}
+            {{ as_timestamp(states.switch.zone_1.last_changed) | timestamp_local }}
+          {% else %}
+            {{ states('sensor.watering_last_started') }}
+          {% endif %}
+
+automation:
+  - alias: Update watering zone runtime
+    trigger:
+      - platform: state
+        entity_id: input_number.zone1_runtime
+      - platform: state
+        entity_id: input_number.zone2_runtime
+      - platform: state
+        entity_id: input_number.zone3_runtime
+      - platform: state
+        entity_id: input_number.zone4_runtime
+    action:
+      - service: esphome.watering_zone_runtime
+        data_template:
+          zone: '{{ trigger.to_state.entity_id | regex_replace("^.*zone(\d+)_.*", "\\1") | int }}'
+          runtime: '{{ trigger.to_state.state | int }}'
+
+  - alias: Automatic watering
+    trigger:
+      - platform: template
+        value_template: "{{ states('sensor.time') == (states.input_datetime.water_time.attributes.timestamp | int | timestamp_custom('%H:%M', False)) }}"
+    condition:
+      condition: or
+      conditions:
+        - condition: template
+          value_template: >-
+            {% set days = ['input_boolean.water_monday',
+            'input_boolean.water_tuesday',
+            'input_boolean.water_wednesday',
+            'input_boolean.water_thursday',
+            'input_boolean.water_friday',
+            'input_boolean.water_saturday',
+            'input_boolean.water_sunday'] %}
+            {{ is_state(days[now().weekday()], "on") }}
+    action:
+      - service: switch.turn_on
+        entity_id: switch.start_watering
+
+  - alias: Watering runtime slider
+    trigger:
+      platform: state
+      entity_id: sensor.zone_1_runtime
+    action:
+      service: input_number.set_value
+      data_template:
+        entity_id: input_number.zone1_runtime
+        value: '{{ states("sensor.zone_1_runtime") | float}}'

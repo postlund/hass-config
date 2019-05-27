@@ -21,7 +21,7 @@ from homeassistant.exceptions import PlatformNotReady
 
 _LOGGER = logging.getLogger(__name__)
 
-REQUIREMENTS = hdmi_cec.REQUIREMENTS
+#REQUIREMENTS = hdmi_cec.REQUIREMENTS
 
 
 def setup_platform(hass, config, add_entities, discovery_info=None):

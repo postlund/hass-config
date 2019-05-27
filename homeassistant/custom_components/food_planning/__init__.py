@@ -23,9 +23,9 @@ _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'food_planning'
 
-REQUIREMENTS = ['PyDrive==1.3.1']
+#REQUIREMENTS = ['PyDrive==1.3.1']
 
-DEPENDENCIES = ['group']
+#DEPENDENCIES = ['group']
 
 CONF_DAYS = 'days'
 CONF_DAY_NAME = 'day_name'

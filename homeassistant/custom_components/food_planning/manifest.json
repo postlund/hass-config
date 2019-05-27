@@ -1,0 +1,8 @@
+{
+  "domain": "food_planning",
+  "name": "Downlod weekly food planning from Google Drive",
+  "documentation": "https://github.com/postlund/hass-config",
+  "dependencies": ["group"],
+  "codeowners": ["@postlund"],
+  "requirements": []
+}

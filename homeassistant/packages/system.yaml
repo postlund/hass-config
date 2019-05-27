@@ -8,6 +8,11 @@ homeassistant:
     sensor.speedtest_ping:
       icon: mdi:timer
 
+    sensor.energy_daily:
+      friendly_name: Today
+    sensor.energy_monthly:
+      friendly_name: Monthly
+
 sensor:
   - platform: systemmonitor
     resources:

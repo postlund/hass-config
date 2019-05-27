@@ -26,4 +26,4 @@ for ent in ENTITIES:
 
 
 # Projector screen is different
-call(hass, 'open_cover', PROJECTOR_SCREEN)
+call(hass, 'close_cover', PROJECTOR_SCREEN)

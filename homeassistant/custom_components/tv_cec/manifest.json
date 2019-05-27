@@ -1,0 +1,8 @@
+{
+  "domain": "tv_cec",
+  "name": "Control TV via CEC with hacks",
+  "documentation": "https://github.com/postlund/hass-config",
+  "dependencies": [],
+  "codeowners": ["@postlund"],
+  "requirements": []
+}

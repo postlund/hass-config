@@ -21,6 +21,25 @@ resources:
     type: js
   - url: /local/card-tools.js?v=deb8e3
     type: js
+  - url: /local/popup-card.js?v=0
+    type: js
+  - url: /local/home-card/home-card.js?v=0
+    type: module
+  - url: /local/xiaomi-vacuum-card.js?v=3
+    type: js
+
+button_card_templates:
+  hk_button:
+    state:
+      - styles:
+          card:
+            - filter: opacity(50%)
+          icon:
+            - filter: grayscale(100%)
+        value: 'off'
+    styles:
+      card:
+        - font-size: 12px
 
 views:
   - title: Home
@@ -31,6 +50,8 @@ views:
       - sensor.bedroom
       - sensor.outside
       - sensor.garage_temperature
+      - sensor.energy_daily
+      - sensor.energy_monthly
     cards:
       - type: vertical-stack
         cards:
@@ -42,18 +63,21 @@ views:
               entity: switch.downstair_lights
               icon: mdi:arrow-down-bold
               size: 40px
+              show_name: false
             - type: custom:button-card
               color: var(--state-icon-active-color)
               color_off: var(--state-icon-color)
               entity: switch.upstair_lights
               icon: mdi:arrow-up-bold
               size: 40px
+              show_name: false
             - type: custom:button-card
               color: var(--state-icon-active-color)
               color_off: var(--state-icon-color)
               entity: switch.sonos_player
               icon: mdi:music-note
               size: 40px
+              show_name: false
           - type: horizontal-stack
             cards:
             - type: custom:button-card
@@ -62,18 +86,21 @@ views:
               entity: script.tv_scene
               icon: mdi:television-classic
               size: 40px
+              show_name: false
             - type: custom:button-card
               color: var(--state-icon-active-color)
               color_off: var(--state-icon-color)
               entity: script.cinema_scene
               icon: mdi:projector
               size: 40px
+              show_name: false
             - type: custom:button-card
               color: var(--state-icon-active-color)
               color_off: var(--state-icon-color)
               entity: script.off_scene
               icon: mdi:weather-night
               size: 40px
+              show_name: false
           - type: glance
             entities:
               - entity: media_player.kok
@@ -86,6 +113,10 @@ views:
                 name: Projector
               - entity: cover.garage_door
                 name: Garage
+      - type: custom:xiaomi-vacuum-card
+        entity: vacuum.xiaomi_vacuum_cleaner
+        name: Xiaomi Vacuum
+        buttons: true
       - type: entities
         entities:
           - type: custom:mini-media-player
@@ -104,6 +135,13 @@ views:
           - type: custom:mini-media-player
             entity: media_player.receiver
             name: Receiver
+            power_color: true
+            hide_volume: false
+            show_progress: true
+            group: true
+          - type: custom:mini-media-player
+            entity: media_player.emby_sonarr_6b2cf3f7e05f
+            name: Emby
             power_color: true
             hide_volume: false
             show_progress: true
@@ -222,7 +260,7 @@ views:
         - type: glance
           title: Pierre
           entities:
-            - entity: device_tracker.pierres_iphone
+            - entity: person.pierre
               name: State
             - entity: sensor.pierres_iphone_battery_level
               name: Battery
@@ -238,7 +276,7 @@ views:
         - type: glance
           title: Tove
           entities:
-            - entity: device_tracker.toves_iphone
+            - entity: person.tove
               name: State
             - entity: sensor.toves_iphone_battery_level
               name: Battery
@@ -314,16 +352,108 @@ views:
         image: /local/rooms/basement.jpg
         title: Basement
         entities:
-          - entity: switch.outside
+          - entity: switch.outside_lights
             icon: mdi:tree
           - entity: switch.engine_heater
             icon: mdi:car
           - cover.garage_door
 
+  - title: Watering
+    icon: mdi:water
+    background: center / cover no-repeat url("/local/background.jpg") fixed
+    cards:
+      - cards:
+          - entity: switch.start_watering
+            label_template: >-
+              return (states['switch.start_watering'].state == "on" ?
+              "Watering..." : "Last watering performed<br><br>" +
+              states['sensor.watering_last_started'].state);
+            layout: icon_label
+            show_label: true
+            show_name: false
+            state:
+              - icon: 'mdi:water'
+                value: 'on'
+              - icon: 'mdi:water-off'
+                value: 'off'
+            type: 'custom:button-card'
+          - columns: 4
+            entities:
+              - entity: switch.zone_1
+              - entity: switch.zone_2
+              - entity: switch.zone_3
+              - entity: switch.zone_4
+              - entity: sensor.zone_1_runtime
+                name: Runtime
+              - entity: sensor.zone_2_runtime
+                name: Runtime
+              - entity: sensor.zone_3_runtime
+                name: Runtime
+              - entity: sensor.zone_4_runtime
+                name: Runtime
+            show_icon: false
+            show_name: true
+            show_state: true
+            type: glance
+        type: vertical-stack
+      - cards:
+          - cards:
+              - entity: input_boolean.water_monday
+                template: hk_button
+                type: 'custom:button-card'
+              - entity: input_boolean.water_tuesday
+                template: hk_button
+                type: 'custom:button-card'
+              - entity: input_boolean.water_wednesday
+                template: hk_button
+                type: 'custom:button-card'
+              - entity: input_boolean.water_thursday
+                template: hk_button
+                type: 'custom:button-card'
+            type: horizontal-stack
+          - cards:
+              - entity: input_boolean.water_friday
+                template: hk_button
+                type: 'custom:button-card'
+              - entity: input_boolean.water_saturday
+                template: hk_button
+                type: 'custom:button-card'
+              - entity: input_boolean.water_sunday
+                template: hk_button
+                type: 'custom:button-card'
+              - color_type: blank-card
+                template: hk_button
+                type: 'custom:button-card'
+            type: horizontal-stack
+          - entities:
+              - input_datetime.water_time
+            type: entities
+          - entities:
+              - entity: input_number.zone1_runtime
+              - entity: input_number.zone2_runtime
+              - entity: input_number.zone3_runtime
+              - entity: input_number.zone4_runtime
+            show_header_toggle: false
+            title: Zone Runtimes
+            type: entities
+        type: vertical-stack
+
   - title: Monitor
     icon: mdi:wrench
     background: center / cover no-repeat url("/local/background.jpg") fixed
     cards:
+      - type: custom:home-card
+        theme: two_story_with_garage
+        weather: weather.smhi_home
+        entities:
+          - type: garage
+            entity: cover.garage_door
+          - type: downstairs_light
+            entity: switch.downstair_lights
+          - type: upstairs_light
+            entity: switch.upstair_lights
+        resources:
+          - entity: sensor.processor_use
       - type: horizontal-stack
         cards:
           - type: gauge

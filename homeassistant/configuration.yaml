@@ -63,7 +63,7 @@ http:
   ssl_certificate: !secret hass_ssl_certificate
   ssl_key: !secret hass_ssl_key
 
-lirc:
+#lirc:
 lovelace:
   mode: yaml
 custom_updater:
@@ -78,6 +78,7 @@ custom_updater:
     - https://raw.githubusercontent.com/bramkragten/custom-ui/master/updater.json
     - https://raw.githubusercontent.com/rdehuyss/homeassistant-lovelace-google-calendar-card/master/custom_updater.json
     - https://raw.githubusercontent.com/kalkih/mini-graph-card/master/tracker.json
+    - https://raw.githubusercontent.com/benct/lovelace-xiaomi-vacuum-card/master/tracker.json
 homekit:
   name: Hemma
   ip_address: !secret hass_ip
@@ -141,7 +142,7 @@ homekit:
       name: Projektorduken
     switch.pierre_bedroom:
       name: Sänglampan
-    switch.outside:
+    switch.outside_lights:
       name: Utomhusbelysning
     switch.office_window:
       name: Kontorsfönstret
@@ -206,7 +207,8 @@ apple_tv:
     credentials: !secret atv_credentials
 
 tts:
-  - platform: google
+  - platform: google_translate
+    service_name: google_say
 
 mqtt:
   broker: !secret mqtt_host
@@ -237,3 +239,11 @@ media_player:
     host: !secret emby_host
     api_key: !secret emby_key
   - platform: tv_cec
+
+utility_meter:
+  energy_daily:
+    source: sensor.power_meter
+    cycle: daily
+  energy_monthly:
+    source: sensor.power_meter
+    cycle: monthly
