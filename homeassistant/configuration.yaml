@@ -221,8 +221,6 @@ mqtt:
   discovery_prefix: !secret mqtt_prefix
 
 emulated_hue:
-  type: google_home
-  listen_port: 80
   host_ip: !secret hass_ip
   expose_by_default: true
   exposed_domains:
