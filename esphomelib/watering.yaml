@@ -1,0 +1,291 @@
+esphome:
+  name: watering
+  platform: ESP8266
+  board: d1_mini
+  on_boot:
+    then:
+      - script.execute: watering_watchdog
+      - binary_sensor.template.publish:
+          id: watering_running
+          state: OFF
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  fast_connect: true
+  reboot_timeout: 1min
+
+api:
+  password: !secret api_password
+  services:
+    - service: auto_off_time
+      variables:
+        time: int
+      then:
+        - lambda: |-
+            if (time > 0) {
+              id(auto_off_time) = time;
+              id(auto_off).update();
+              ESP_LOGD("main", "Changing auto-off to %d", time);
+            } else {
+              ESP_LOGD("main", "Invalid auto-off time: %d", time);
+            }
+
+    - service: zone_runtime
+      variables:
+        zone: int
+        runtime: int
+      then:
+        - lambda: |-
+            if (zone >= 1 && zone <= 4) {
+              id(zone_runtimes)[zone - 1] = runtime;
+              id(zone1_time).update();
+              id(zone2_time).update();
+              id(zone3_time).update();
+              id(zone4_time).update();
+              ESP_LOGD("main", "Changing runtime to %d for zone %d", runtime, zone);
+            } else {
+              ESP_LOGD("main", "Invalid zone: %d", zone);
+            }
+
+logger:
+ota:
+web_server:
+
+globals:
+  - id: zone_runtimes
+    type: int[4]
+    initial_value: "{300, 300, 300, 0}"
+    restore_value: true
+  - id: loop_var
+    type: int
+  - id: last_activated_time
+    type: int
+  - id: auto_off_time
+    type: int
+    initial_value: "610"
+    restore_value: true
+
+script:
+  - id: relays_off
+    then:
+      - switch.turn_off: relay1
+      - switch.turn_off: relay2
+      - switch.turn_off: relay3
+      - switch.turn_off: relay4
+
+  - id: perform_watering
+    then:
+      - lambda: 'id(loop_var) = 0;'
+      - binary_sensor.template.publish:
+          id: watering_running
+          state: ON
+      - logger.log: 'Starting watering sequence'
+      - while:
+          condition:
+            lambda: 'return id(loop_var) < (sizeof(id(zone_runtimes)) / sizeof(id(zone_runtimes)[0]));'
+          then:
+            - if:
+                condition:
+                  lambda: 'return id(zone_runtimes)[id(loop_var)] > 0;'
+                then:
+                  - logger.log:
+                      format: 'Activating zone %d for %d seconds'
+                      args: [ 'id(loop_var) + 1', 'id(zone_runtimes)[id(loop_var)]' ]
+                  - lambda: |-
+                      static std::array<esphome::switch_::TemplateSwitch*, 4> switches =
+                        {id(water_zone_1), id(water_zone_2), id(water_zone_3), id(water_zone_4)};
+                      switches[id(loop_var)]->turn_on();
+                  - delay: !lambda "return id(zone_runtimes)[id(loop_var)] * 1000;"
+            - lambda: 'id(loop_var) += 1;'
+      - script.execute: relays_off
+      - binary_sensor.template.publish:
+          id: watering_running
+          state: OFF
+      - logger.log: 'Finished watering sequence'
+
+  - id: watering_watchdog
+    then:
+      - logger.log: 'Starting watering watchdog'
+      - while:
+          condition:
+            lambda: 'return true;'
+          then:
+            - if:
+                condition:
+                  lambda: |-
+                    if (!id(relay1).state && !id(relay2).state && !id(relay3).state && !id(relay4).state)
+                      return false;
+
+                    return (id(uptime).state - id(last_activated_time)) >= id(auto_off_time);
+                then:
+                  - logger.log:
+                      format: 'Auto-off limit reached'
+                  - switch.turn_off: start_watering
+            - delay: 1s
+
+switch:
+  - platform: template
+    id: water_zone_1
+    name: "Zone 1"
+    lambda: |-
+      return id(relay1).state;
+    turn_off_action:
+      - switch.turn_off: relay1
+    turn_on_action:
+      - script.execute: relays_off
+      - delay: 1s
+      - switch.turn_on: relay1
+  - platform: template
+    id: water_zone_2
+    name: "Zone 2"
+    lambda: |-
+      return id(relay2).state;
+    turn_off_action:
+      - switch.turn_off: relay2
+    turn_on_action:
+      - script.execute: relays_off
+      - delay: 1s
+      - switch.turn_on: relay2
+  - platform: template
+    id: water_zone_3
+    name: "Zone 3"
+    lambda: |-
+      return id(relay3).state;
+    turn_off_action:
+      - switch.turn_off: relay3
+    turn_on_action:
+      - script.execute: relays_off
+      - delay: 1s
+      - switch.turn_on: relay3
+  - platform: template
+    id: water_zone_4
+    name: "Zone 4"
+    lambda: |-
+      return id(relay4).state;
+    turn_off_action:
+      - switch.turn_off: relay4
+    turn_on_action:
+      - script.execute: relays_off
+      - delay: 1s
+      - switch.turn_on: relay4
+
+  - platform: gpio
+    id: relay1
+    internal: true
+    name: "Relay1"
+    restore_mode: ALWAYS_OFF
+    pin:
+      number: D7
+      inverted: true
+    interlock: &relay_group [relay1, relay2, relay3, relay4]
+    on_turn_on:
+      then:
+        - lambda: |-
+            id(last_activated_time) = id(uptime).state;
+            id(last_activated).update();
+  - platform: gpio
+    id: relay2
+    internal: true
+    name: "Relay2"
+    restore_mode: ALWAYS_OFF
+    pin:
+      number: D6
+      inverted: true
+    interlock: *relay_group
+    on_turn_on:
+      then:
+        - lambda: |-
+            id(last_activated_time) = id(uptime).state;
+            id(last_activated).update();
+  - platform: gpio
+    id: relay3
+    internal: true
+    name: "Relay3"
+    restore_mode: ALWAYS_OFF
+    pin:
+      number: D5
+      inverted: true
+    interlock: *relay_group
+    on_turn_on:
+      then:
+        - lambda: |-
+            id(last_activated_time) = id(uptime).state;
+            id(last_activated).update();
+  - platform: gpio
+    id: relay4
+    internal: true
+    name: "Relay4"
+    restore_mode: ALWAYS_OFF
+    pin:
+      number: D3
+      inverted: true
+    interlock: *relay_group
+    on_turn_on:
+      then:
+        - lambda: |-
+            id(last_activated_time) = id(uptime).state;
+            id(last_activated).update();
+
+  - platform: template
+    name: Start watering
+    id: start_watering
+    lambda: |-
+      return id(watering_running).state;
+    turn_on_action:
+      - script.execute: perform_watering
+    turn_off_action:
+      - script.execute: relays_off
+      - binary_sensor.template.publish:
+          id: watering_running
+          state: OFF
+      - script.stop: perform_watering
+
+sensor:
+  - platform: template
+    id: zone1_time
+    name: Zone 1 Runtime
+    lambda: |-
+      return id(zone_runtimes)[0];
+  - platform: template
+    id: zone2_time
+    name: Zone 2 Runtime
+    lambda: |-
+      return id(zone_runtimes)[1];
+  - platform: template
+    id: zone3_time
+    name: Zone 3 Runtime
+    lambda: |-
+      return id(zone_runtimes)[2];
+  - platform: template
+    id: zone4_time
+    name: Zone 4 Runtime
+    lambda: |-
+      return id(zone_runtimes)[3];
+
+  - platform: template
+    id: auto_off
+    name: Automatic turn off
+    lambda: |-
+      return id(auto_off_time);
+
+  - platform: pulse_counter
+    pin: D4
+    name: Water flow
+
+  - platform: template
+    id: last_activated
+    name: Last Relay Activation
+    internal: true
+    lambda: |-
+      return id(last_activated_time);
+
+  - platform: uptime
+    id: uptime
+    update_interval: 1s
+    internal: false
+
+binary_sensor:
+  - platform: template
+    id: watering_running
+    name: Watering Running
