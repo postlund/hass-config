@@ -1,3 +1,54 @@
+automation:
+  - alias: Vacuum when nobody is home
+    trigger:
+      platform: state
+      entity_id: input_boolean.last_person_left
+      to: 'on'
+    condition:
+      condition: state
+      entity_id: input_boolean.has_vacuumed_today
+      state: 'off'
+    action:
+      - service: vacuum.start
+        entity_id: vacuum.xiaomi_vacuum_cleaner
+      - service: notify.system
+        data:
+          message: Vacuum is now cleaning
+
+  - alias: Set vacuum performed after cleaning
+    trigger:
+      platform: state
+      entity_id: vacuum.xiaomi_vacuum_cleaner
+      from: cleaning
+      to: returning
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.has_vacuumed_today
+      - service: notify.system
+        data:
+          message: Vacuum finished cleaning
+
+  - alias: Reset auto-vacuum status
+    trigger:
+      platform: time
+      at: '00:00:00'
+    action:
+      service: input_boolean.turn_off
+      entity_id: input_boolean.has_vacuumed_today
+
+input_boolean:
+  has_vacuumed_today:
+    icon: mdi:robot-vaccum
+    name: Has vacuumed today
+
+input_number:
+  floor1_vacuum_area:
+    name: Area of first floor
+    min: 0
+    max: 120
+    step: 1
+    mode: box
+
 vacuum:
   - platform: xiaomi_miio
     host: !secret xiaomi_vacuum_host

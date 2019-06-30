@@ -1,0 +1,10 @@
+{
+  "domain": "system_log_collector",
+  "name": "System log collector",
+  "documentation": "https://github.com/postlund/hass-config",
+  "requirements": [],
+  "dependencies": [
+    "system_log"
+  ],
+  "codeowners": ["@postlund"]
+}

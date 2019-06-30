@@ -47,6 +47,7 @@ group:
 
   downstair_lights:
     name: All lights downstairs
+    all: true
     entities:
       - switch.entrance_mirror_switch
       - switch.entrance_unused_switch
@@ -64,6 +65,7 @@ group:
 
   upstair_lights:
     name: Upstair lights
+    all: true
     entities:
       - switch.guest_room
       - switch.bedroom_window
@@ -71,9 +73,16 @@ group:
   # Lights that should be turned off when entering cinema scene
   cinema_lights:
     name: Cinema lights
+    all: true
     entities:
       - switch.dining_room_window
       - switch.christmas_tree
       - switch.living_room_window
       - switch.living_room_balls_switch
       - switch.living_room_stars_switch
+
+  family:
+    name: All family members
+    entities:
+      - person.pierre
+      - person.tove

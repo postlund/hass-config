@@ -39,6 +39,7 @@
     "132": "switch.zone_2",
     "133": "switch.zone_1",
     "134": "switch.outside_lights",
+    "135": "script.radio",
     "14": "group.all_covers",
     "15": "group.all_automations",
     "16": "switch.tradgardsfonstret_i_vardagsrummet",

@@ -1,0 +1,30 @@
+input_boolean:
+  last_person_left:
+    name: Last person left home
+    initial: off
+
+automation:
+  - alias: Turn on after last person leave home
+    trigger:
+      platform: state
+      entity_id: group.family
+      to: not_home
+      for:
+        hours: 0
+        minutes: 5
+        seconds: 0
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.last_person_left
+      - service: notify.system
+        data:
+          message: Nobody is no longer home
+
+  - alias: Turn off when someone comes home
+    trigger:
+      platform: state
+      entity_id: group.family
+      to: home
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.last_person_left

@@ -1,3 +1,25 @@
+automation:
+  - alias: Sonos off when nobody is home
+    trigger:
+      platform: state
+      entity_id: group.family
+      to: not_home
+      for:
+        hours: 0
+        minutes: 5
+        seconds: 0
+    action:
+     - service: switch.turn_off
+       entity_id: switch.sonos_player
+
+  - alias: Sonos off when Tim eats
+    trigger:
+      platform: time
+      at: '18:30:00'
+    action:
+     - service: switch.turn_off
+       entity_id: switch.sonos_player
+
 homeassistant:
   customize:
     script.sonos_say:
@@ -22,9 +44,13 @@ switch:
           entity_id: media_player.kok
 
 script:
-  p3:
-    alias: P3
+  radio:
+    alias: Radio
     sequence:
+      - service: media_player.volume_set
+        entity_id: media_player.kok
+        data:
+          volume_level: 0.20
       - service: media_player.select_source
         entity_id: media_player.kok
         data:

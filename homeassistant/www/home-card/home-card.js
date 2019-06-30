@@ -1,84 +1,12 @@
+import { THEMES } from './themes.js';
+
 const LitElement = Object.getPrototypeOf(
   customElements.get("ha-panel-lovelace")
 );
 const html = LitElement.prototype.html;
 const css = LitElement.prototype.css;
 
-const VERSION = 1;
-
-const THEMES = {
-  'two_story_with_garage': {
-    'house': 'house.png',
-    'overlays': {
-      'garage': {
-        'open': [
-          {
-            'image': 'garage-open.png',
-            'style': { 'width': '24%', 'left': '74%', 'top': '80%', 'z-index': '10' },
-          },
-        ],
-        'closed': [
-          {
-          'image': 'garage-close.png',
-          'style': { 'width': '24%', 'left': '74%', 'top': '80%', 'z-index': '10' },
-          },
-        ],
-      },
-      'downstairs_light': {
-        'on': [
-          {
-            'image': 'window-light.png',
-            'style': { 'width': '6.5%', 'left': '56%', 'top': '73%', 'z-index': '10' },
-          },
-          {
-            'image': 'window-light.png',
-            'style': { 'width': '6.5%', 'left': '16%', 'top': '73%', 'z-index': '10' },
-          },
-          {
-            'image': 'window-light.png',
-            'style': { 'width': '6.5%', 'left': '24%', 'top': '73%', 'z-index': '10' },
-          },
-        ],
-        'off': [
-          {
-            'image': 'window-dark.png',
-            'style': { 'width': '6.5%', 'left': '56%', 'top': '73%', 'z-index': '10' },
-          },
-          {
-            'image': 'window-dark.png',
-            'style': { 'width': '6.5%', 'left': '16%', 'top': '73%', 'z-index': '10' },
-          },
-          {
-            'image': 'window-dark.png',
-            'style': { 'width': '6.5%', 'left': '24%', 'top': '73%', 'z-index': '10' },
-          },
-        ]
-      },
-      'upstairs_light': {
-        'on': [
-          {
-            'image': 'window-light.png',
-            'style': { 'width': '7%', 'left': '32%', 'top': '30%', 'z-index': '10' },
-          },
-        ],
-        'off': [
-          {
-            'image': 'window-dark.png',
-            'style': { 'width': '7%', 'left': '32%', 'top': '30%', 'z-index': '10' },
-          },
-        ]
-      },
-      'car': {
-        'home': [
-          {
-            'image': 'car.png',
-            'style': { 'width': '18%', 'left': '74%', 'top': '91%', 'z-index': '10' },
-          },
-        ],
-      },
-    },
-  },
-};
+const VERSION = 3;
 
 // From weather-card
 const fireEvent = (node, type, detail, options) => {
@@ -99,7 +27,21 @@ class HomeCard extends LitElement {
   static get properties() {
     return {
       config: {},
-      hass: {}
+      hass: {},
+      held: false,
+      timer: {},
+    };
+  }
+
+  static async getConfigElement() {
+    await import("./home-card-editor.js");
+    return document.createElement("home-card-editor");
+  }
+
+  static getStubConfig() {
+    return {
+      tap_action: { action: "more-info" },
+      hold_action: { action: "none" },
     };
   }
 
@@ -124,35 +66,64 @@ class HomeCard extends LitElement {
   }
 
   render() {
-    var weatherObj = this.hass.states[this.config.weather];
+    try {
+      if (this.config.background == 'paper-card') {
+        return html `<ha-card>${this.make_content()}</ha-card>`;
+      }
+
+      return this.make_content();
+    } catch (error) {
+      return html `
+              <ha-card>
+                <div class="error-message">
+                  ${error}
+                </div>
+              </ha-card>
+        `;
+    }
+  }
+
+  make_content() {
+    var weather = "";
+    var resources = "";
+
+    if (this.config.weather) {
+      var weatherObj = this.stateObject('weather', this.config.weather);
+      weather = html `
+                 <div id="weather">
+                   <img id="weather-icon" src="${this.imgPath("weather-" + weatherObj.state + ".png")}" />
+                   <span id="weather-info">
+                     ${weatherObj.attributes.friendly_name}
+                     ${weatherObj.attributes.temperature}${this.hass.config.unit_system.temperature}
+                   </span>
+                  </div>`;
+    }
+
+    if (this.config.resources) {
+	resources = html `
+                     <div id="resource-usage">
+                       ${this.config.resources.map(resource => this.make_resource(resource))}
+                    </div>`;
+    }
+
     return html `
             <div id="root">
-              ${this.config.weather ?
-                html `
-                <div id="weather">
-                  <img id="weather-icon" src="${this.imgPath("weather-" + weatherObj.state + ".png")}" /> 
-                  <span id="weather-info">
-                    ${weatherObj.attributes.friendly_name} 
-                    ${weatherObj.attributes.temperature}${this.hass.config.unit_system.temperature}
-                  </span>
-                </div>`
-                : ""
-              }
+              ${weather}
               <div id="house">
                 <img id="house-image" src="${this.imgPath(this.theme.house)}" />
                 ${this.make_entities()}
               </div>
-              <div id="resource-usage">
-                ${this.config.resources.map(resource => this.make_resource(resource))}
-              </div>
+              ${resources}
             </div>
       `;
   }
 
   make_resource(resource) {
-    var stateObj = this.hass.states[resource.entity];
+    var stateObj = this.stateObject('resources', resource.entity);
     return html `
-            <span @click="${ev => this.more_info(resource.entity)}">
+            <span @mousedown="${ev => this._down(resource)}"
+                  @touchstart="${ev => this._down(resource)}"
+                  @mouseup="${ev => this._up(resource, false)}">
               <span class="icon">
                 <ha-icon icon="${resource.icon || this.get_attribute(stateObj, 'icon', 'mdi:help-rhombus')}" />
               </span>
@@ -184,10 +155,7 @@ class HomeCard extends LitElement {
         throw Error('Unsupported entity type: ' + entity.type);
       }
 
-      var stateObj = this.hass.states[entity.entity];
-      if (!stateObj) {
-        throw Error('Entity does not exist: ' + entity.entity);
-      }
+      var stateObj = this.stateObject('entities', entity.entity);
 
       var state = stateObj.state;
       if (entity.state_map && stateObj.state in entity.state_map) {
@@ -199,7 +167,7 @@ class HomeCard extends LitElement {
         for (var i = 0; i < overlay.length; ++i) {
           var imageName = entity.type + '_' + stateObj.state + '_' + i;
           to_add.push(this.create_overlay(
-            imageName, overlay[i].image, overlay[i].style, entity.entity));
+            imageName, overlay[i].image, overlay[i].style, entity));
         }
       }
     });
@@ -213,16 +181,118 @@ class HomeCard extends LitElement {
                  src="${this.imgPath(imageFile)}"
                  class="element"
                  style="${styleString}"
-                 @click="${ev => this.toggle(entity)}" />
+                 @mousedown="${ev => this._down(entity)}"
+                 @touchstart="${ev => this._down(entity)}"
+                 @mouseup="${ev => this._up(entity, true)}" />
     `
-  }
-
-  toggle(entity_id) {
-    this.hass.callService('homeassistant', 'toggle', { entity_id: entity_id });
   }
 
   imgPath(filename) {
     return `/local/home-card/themes/${this.config.theme}/${filename}?v=${VERSION}`;
+  }
+
+  stateObject(source, entity_id) {
+    if (!entity_id) {
+      throw Error(`Empty entity id specified in ${source}`);
+    }
+
+    var stateObj = this.hass.states[entity_id];
+    if (!stateObj) {
+      throw Error(`The entity "${entity_id}" does not exist (${source})`)
+    }
+
+    return stateObj;
+  }
+
+  // The function contains so much magic...
+  get_entity_action(config, action) {
+    // If action is specified for this entity, use that
+    if (config[action]) {
+      return config[action];
+    }
+
+    // If no action is specified, use theme defined action
+    if (this.theme.overlay_actions) {
+      var overlayActions = this.theme.overlay_actions;
+
+      // First check for specific overlay in theme
+      if (overlayActions[config.type] && overlayActions[config.type][action]) {
+        return overlayActions[config.type][action];
+      }
+
+      // Next check default for all overlays in theme
+      if (overlayActions['*'] && overlayActions['*'][action]) {
+        return overlayActions['*'][action];
+      }
+    }
+
+    // If no theme action, fallback to default action
+    return { action: 'more-info', };
+  }
+
+  // Tap/hold for resources are hardcoded to more-info for now (maybe configurable in the future)
+  get_resource_action(action) {
+    return { 'action':  'more-info'};
+  }
+
+  handleClick(config, actionConfig) {
+    switch (actionConfig.action) {
+      case "more-info":
+        if (config.entity || config.camera_image) {
+          fireEvent(this, "hass-more-info", {
+            entityId: config.entity ? config.entity : config.camera_image,
+          });
+        }
+        break;
+      case "navigate":
+        if (actionConfig.navigation_path) {
+          history.pushState(null, "", actionConfig.navigation_path);
+          fireEvent(window, "location-changed");
+        }
+        break;
+      case "toggle":
+        if (!config.entity) {
+          return;
+        }
+
+        if (config.entity.startsWith("cover.")) {
+          var coverState = this.hass.states[config.entity].state;
+          this.hass.callService('cover',
+                               coverState == 'open' ? 'close_cover' : 'open_cover',
+                               {'entity_id': config.entity});
+        } else {
+          this.hass.callService('homeassistant', 'toggle', {'entity_id': config.entity});
+        }
+        break;
+      case "call-service": {
+        if (actionConfig.service) {
+          const [domain, service] = actionConfig.service.split(".", 2);
+          this.hass.callService(domain, service, actionConfig.service_data);
+        }
+      }
+    }
+  }
+
+  _down(config) {
+    if (!this.timer) {
+      this.timer = window.setTimeout(() => { this.held = true; }, 500);
+      this.held = false;
+    }
+  }
+
+  _up(config, is_overlay) {
+    if (this.timer) {
+      clearTimeout(this.timer);
+      this.timer = undefined;
+
+      let actionConfig = undefined;
+      if (is_overlay) {
+        actionConfig = this.get_entity_action(config, this.held ? 'hold_action' : 'tap_action');
+      } else {
+        actionConfig = this.get_resource_action(this.held ? 'hold_action' : 'tap_action')
+      }
+      this.handleClick(config, actionConfig);
+    }
   }
 
   static get styles() {
@@ -270,6 +340,10 @@ class HomeCard extends LitElement {
         height: 100%;
         position: relative;
         margin-top: 25px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        grid-auto-rows: 20px;
+        grid-gap: 5px;
       }
       .element {
         position: absolute;
@@ -283,6 +357,11 @@ class HomeCard extends LitElement {
         position: relative;
         text-align: center;
         width: 40px;
+      }
+      .error-message {
+        flex: 1;
+        background-color: yellow;
+        padding: 1em;
       }
   `;
   }

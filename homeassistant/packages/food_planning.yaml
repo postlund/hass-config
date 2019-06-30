@@ -22,3 +22,16 @@ food_planning:
     - name: Sunday
       day_name: Sön
       day_number: 6
+
+sensor:
+  - platform: template
+    sensors:
+      food_today:
+        friendly_name: Food today
+        entity_id: sensor.time
+        value_template: |-
+          {% set food = ['food_planning.monday', 'food_planning.tuesday',
+                         'food_planning.wednesday', 'food_planning.thursday',
+                         'food_planning.friday', 'food_planning.saturday',
+                         'food_planning.sunday'] %}
+          {{ states(food[now().weekday()]) }}

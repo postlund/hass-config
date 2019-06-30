@@ -65,7 +65,7 @@ switch:
 input_boolean:
   receiver_hdmi1_enabled:
     name: Receiver HDMI1 outut enabled
-  cinema_lights_turned_off:
+  cinema_lights_before_start:
     name: If cinema_lights were turned off when starting cinema
 
 script:

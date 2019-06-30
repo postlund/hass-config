@@ -4,36 +4,38 @@ A quick glance of the state of your home in [Home Assistant](https://github.com/
 
 ![Demo of card](images/demo.gif)
 
+Initial work on UI editor (only some options can be edited):
+
+![UI Editor](images/card-editor.png)
+
 *Note: This card is still in early development (preview/proof-of-concept), beware of bugs and lacking features!*
 
 ## Features
 
-* Graphical representation of your house with different themes
+* Graphical representation of your home with different themes
 * Displays things such as weather, state of lights and garage door as well as arbitrary sensors
+* Lovelace UI editor for some options (still early work)
+* Flexible tap and hold actions (same as for entity-button)
 * Create your own custom themes!
-* Othings small things...
+* Transparent or regular paper card background
 
 ## Roadmap
 
 Some things I want to add in upcoming releases:
 
-* Much better error handling, especially for misspelled entity_ids
-* Custom tap and hold actions, like in the stock entity-button card
 * More house types and better graphics
 * Extend with additional overlays for things like alarm, people and doors
-* Option to add regular paper card background (i.e. not transparent)
 * More ways to customize how the card looks and feel
 * Extend or override existing themes using `custom_themes`
-* Lovelace UI editor
+* More improved Lovelace UI editor
 * Support for custom_updater
 * Better development environment with linting, etc.
-* Other cool things?
 
 ## Install
 
 ### Simple Install
 
-1. Download `home-card.js` and `themes` and copy them into `config/www/home-card` (create the `home-card` directory)
+1. Download `home-card.js`, `themes.js` and `themes` and copy them into `config/www/home-card` (create the `home-card` directory)
 
 2. Add a reference to `home-card/home-card.js` inside your `ui-lovelace.yaml`
 
@@ -90,6 +92,7 @@ Both the weather and resources areas are optional and will not displayed if omit
 |------|------|---------|-------------|
 | type | string | **required** | `custom:home-card`
 | theme | string | **required** | Name of a theme, see [supported themes](#supported-themes)
+| background | string | transparent | Supported values: empty, `transparent`, `paper-card`
 | weather | string | optional | `weather` entity used for displaying location and temperature
 | entities | object | optional | List of [entity objects](#entity-object)
 | resources | object | optional | List of [resource objects](#resource-object)
@@ -101,16 +104,19 @@ The following themes and overlays are currently supported:
 
 | Theme | Overlays |
 |------|----------|
-| two_story_with_garage | garage, upstairs_light, downstairs_light, car
+| two_story_with_garage | door, garage, outside_light, upstairs_light, downstairs_light, car, sprinkler
 
 These states are supported by the overlays:
 
 | Overlay | States | Component examples |
 |---------|--------|-----------------------|
 | car | home, not_home | device_tracker
+| door | on, off | E.g. binary_sensor, switch
 | downstairs_lights | on, off | E.g. light, binary_sensor
 | garage | open, closed | cover
+| outside_light | on, off | E.g. light, binary_sensor
 | upstairs_lights | on, off | E.g. light, binary_sensor
+| sprinkler | on, off | E.g. binary_sensor, switch
 
 You may add additional state mappings using a `state_map` to support other component types, see [Entity object](#entity-object).
 
@@ -134,6 +140,8 @@ A simple example of an entity object in yaml looks like this:
     off: not_home
 ```
 
+This object supports custom [tap and hold actions](#tap-and-hold-actions).
+
 #### Resource object
 
 A `resource` is a simple sensor that is displayed beneath the house, e.g. a temperature sensor or water usage. You can use any entity but you might have to manually specify an `icon` and/or `unit_of_measurement`.
@@ -152,6 +160,8 @@ A simple example of a resource object in yaml looks like this:
   unit_of_measurement: liter
 ```
 
+This object supports custom [tap and hold actions](#tap-and-hold-actions).
+
 #### Theme object
 
 **THIS IS EXPERIMENTAL AND MAY BREAK LATER - BEWARE!**
@@ -165,9 +175,24 @@ You can define your own themes and use your own images if you like. Some things 
 
 The format of this object will be described in more detail once the format has been set, but have a look at the [example](#creating-custom-themes) to see how you configure your theme in current state.
 
+### Tap and hold actions
+
+This card supports custom `tap` and `hold` actions for most things available in the card. Each theme defines the default behavior for how `tap` and `hold` works, but you may freely override this behavior. The exact same format as used by the `entity button` in lovelace is used here.
+
+The following options are valid for `tap_action` and `hold_action`:
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| action | string | **required** | Action to perform, one of: `more-info`, `toggle`, `call-service`, `navigate`, `none`
+| navigation_path | string | optional | Where to navigate (e.g. `/lovelace/1`) when `action` is `navigate`
+| service | string | optional | Service to call (e.g. `switch.turn_on`) when `action` is `call-service`
+| service_data | string | optional | Service data to include when calling a service (e.g. `entity_id: switch.bedroom`).
+
+To see an example, click [here](#using-custom-tap-and-hold-actions).
+
 ### Example usage
 
-#### Defining a house
+#### Defining a home
 
 Simple example using basic features:
 
@@ -193,6 +218,32 @@ Simple example using basic features:
       icon: 'mdi:thermometer'
 ```
 
+#### Using custom tap and hold actions
+
+Simple example using various `tap` and `hold` actions:
+
+```yaml
+- type: 'custom:home-card'
+  theme: two_story_with_garage
+  entities:
+    - type: car
+      entity: device_tracker.car
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/2
+      hold_action:
+        action: more-info
+  resources:
+    - entity: sensor.outside_temperature
+      tap_action:
+        action: call-service
+        service: switch.turn_on
+        service_data:
+          entity_id: switch.fan
+      hold_action:
+        action: none
+```
+
 #### Re-mapping states
 
 Here, the `car` type is used as an example. It requires the specified entity to be a `device_tracker` as it maps states like `home` and `not_home` to different overlays. But you can add additional mappings to support for instance a `binary_sensor` as well using `state_map`, like below:
@@ -202,7 +253,7 @@ Here, the `car` type is used as an example. It requires the specified entity to 
   theme: two_story_with_garage
   entities:
     - type: car
-      entity: binary_sensor_.car
+      entity: binary_sensor.car
       state_map:
         on: home
         off: not_home
@@ -214,13 +265,20 @@ You can define you own themes quite simply using `custom_themes`. The basic stru
 
 ```yaml
 - type: 'custom:home-card'
-  theme: my_house
+  theme: my_home
   entities:
     - type: car
       entity: device_tracker.car
   custom_themes:
-    my_house:
+    my_home:
       house: house.png
+      overlay_actions:
+        '*':
+          tap_action:
+            action: toggle
+        car:
+          tap_action:
+            action: more-info
       overlays:
         car:
           home:
@@ -229,7 +287,7 @@ You can define you own themes quite simply using `custom_themes`. The basic stru
                 left: 10%
                 top: 10%
           not_home:
-            - image: car_away_.png
+            - image: car_away.png
               style:
                 left: 40%
                 top: 40%
@@ -239,21 +297,20 @@ Some notes here:
 
 * You can defined multiple images for each state if you like (as a list is used)
 * `style` translates to CSS style attributes, so you may use any CSS attributes here
-* The theme is called `my_house`, so a directory with the same name must be created in the `themes` directory and all images placed there
+* The theme is called `my_home`, so a directory with the same name must be created in the `themes` directory and all images placed there
 * The `house` option is the main backdrop image and must be defined
 * Overlay name (e.g. `car`) corresponds to `type` you specify under `entities` and may be anything you like (but try to be consistent with other themes to simply for other users in case you share your theme)
 * If an entity in Home Assistant has a state that is not defined by its corresponding overlay, no overlay will be shown
+* Different `tap_action` and `hold_action` configurations can be defined for specific overlay taps (like for 'car' in the example) or for all overlays using `*`.
 
 ## Issues and imitations
 
-* No custom tap or hold action for entities
-* Toggle is used as defult tap action, which does not work for `cover` and does not make sense for `device_tracker`
-* No lovelace configuration UI
+* Very limited lovelace editor support
 * Only one theme built-in
 
 ## Getting errors?
 
-Clear the browser cache, restart Home Assistant and make sure the configuration is correct (currently the card does not give proper error messages if you misspell an entity name in most places).
+Clear the browser cache, restart Home Assistant and make sure the configuration is correct.
 
 If you believe you have found an error, please write an issue.
 

@@ -31,28 +31,28 @@ input_number:
   zone1_runtime:
     name: Zone 1
     min: 0
-    max: 600
+    max: 3600
     unit_of_measurement: seconds
     icon: mdi:water
 
   zone2_runtime:
     name: Zone 2
     min: 0
-    max: 600
+    max: 3600
     unit_of_measurement: seconds
     icon: mdi:water
 
   zone3_runtime:
     name: Zone 3
     min: 0
-    max: 600
+    max: 3600
     unit_of_measurement: seconds
     icon: mdi:water
 
   zone4_runtime:
     name: Zone 4
     min: 0
-    max: 600
+    max: 3600
     unit_of_measurement: seconds
     icon: mdi:water
 
@@ -61,7 +61,7 @@ sensor:
     sensors:
       watering_last_started:
         friendly_name: Last Started
-        entity_id: switch.start_watering
+        entity_id: switch.zone_1
         value_template: >-
           {% if states('switch.start_watering') == 'on' %}
             {{ as_timestamp(states.switch.zone_1.last_changed) | timestamp_local }}

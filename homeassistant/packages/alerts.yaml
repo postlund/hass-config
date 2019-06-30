@@ -8,5 +8,5 @@ alert:
     can_acknowledge: true
     skip_first: true
     notifiers:
-      - ios_pierres_iphone
+      - mobile_app_pierres_iphone
 

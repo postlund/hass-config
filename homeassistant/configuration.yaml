@@ -10,9 +10,28 @@ homeassistant:
     - /home/homeassistant/
   packages: !include_dir_named packages
 
+config:
 automation: !include automations.yaml
+frontend:
+  javascript_version: latest
+  themes: !include_dir_merge_named themes
+history:
+logbook:
+  exclude:
+    entities:
+      - sensor.time
+      - sensor.date
+    domains:
+      - sun
+map:
+mobile_app:
+person:
+script:
+ssdp:
+sun:
+system_health:
+zeroconf:
 
-default_config:
 calendar:
   - platform: caldav
     username: !secret icloud_username
@@ -21,27 +40,15 @@ calendar:
     calendars:
       - Familj
 
-logbook:
-  exclude:
-    entities:
-      - sensor.time
-      - sensor.date
-    domains:
-      - sun
+system_log:
+  fire_event: true
+
+sensor:
+  - platform: system_log_collector
 
 logger:
   default: warn
 ios:
-config:
-frontend:
-  javascript_version: latest
-  themes: !include_dir_merge_named themes
-  extra_html_url:
-    - /local/custom_ui/state-card-tiles.html
-    - /local/custom_ui/state-card-food-planning.html
-  extra_html_url_es5:
-    - /local/custom_ui/state-card-tiles_es5.html
-    - /local/custom_ui/state-card-food-planning_es5.html
 
 discovery:
   ignore:
@@ -184,12 +191,12 @@ notify:
   - name: all_people
     platform: group
     services:
-      - service: ios_pierres_iphone
-      - service: ios_toves_iphone
+      - service: mobile_app_pierres_iphone
+      #- service: ios_toves_iphone
   - name: system
     platform: group
     services:
-      - service: ios_pierres_iphone
+      - service: mobile_app_pierres_iphone
 
 switch:
   - platform: broadlink
@@ -245,3 +252,14 @@ utility_meter:
   energy_monthly:
     source: sensor.power_meter
     cycle: monthly
+
+input_select:
+  preference_card:
+    options:
+      - Hide
+      - Links
+      - Irrigation
+      - Automations
+      - Engine Heater
+      - Vacuum
+      - Management

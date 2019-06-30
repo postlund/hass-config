@@ -1,4 +1,4 @@
-title: Home Sweet Home
+title: ' '
 
 resources:
   - url: /local/tracker-card.js?v=1.0.0
@@ -6,8 +6,6 @@ resources:
   - url: /local/mini-media-player-bundle.js?v=1.0.2
     type: module
   - url: /local/button-card.js?v=0.0.5a
-    type: module
-  - url: /local/custom-lovelace/swipe-card/swipe-card.js?v=2.0.0
     type: module
   - url: /local/custom-lovelace/upcoming-media-card/upcoming-media-card.js?v=0.3.4
     type: js
@@ -17,18 +15,64 @@ resources:
     type: module
   - url: /local/mini-graph-card-bundle.js?v=0.3.0
     type: js
-  - url: /local/useful-markdown-card.js?v=9377d8
-    type: js
   - url: /local/card-tools.js?v=deb8e3
     type: js
   - url: /local/popup-card.js?v=0
     type: js
-  - url: /local/home-card/home-card.js?v=0
+  - url: /local/home-card/home-card.js?v=10
     type: module
   - url: /local/xiaomi-vacuum-card.js?v=3
     type: js
+  - url: /local/swipe-card.js
+    type: module
+  - url: /local/markdown-mod.js?v=1
+    type: module
+  - url: /local/vertical-stack-in-card.js?v=0
+    type: js
+  - url: /local/monster-card.js?v=0
+    type: js
 
 button_card_templates:
+  status_row:
+    layout: icon_label
+    show_state: false
+    show_name: false
+    show_label: true
+    color: var(--primary-text-color)
+    color_off: var(--primary-text-color)
+    styles:
+      card:
+        - padding-top: 10px
+        - padding-bottom: 5px
+        - font-size: 14px
+        - padding-left: 20px
+        - padding-right: 20px
+      icon:
+        - width: 30px
+      label:
+        - width: 90%
+        - margin-top: 5px
+        - margin-left: 15px
+        - justify-self: start
+        - text-align: left
+      grid:
+        - grid-template-columns: 1fr 90%
+    tap_action:
+      action: more-info
+      haptic: selection
+  shortcut:
+    size: 40px
+    show_label: true
+    show_name: false
+    tap_action:
+      action: toggle
+      haptic: selection
+    hold_action:
+      action: more-info
+      haptic: selection
+    styles:
+      card:
+        - font-size: 14px
   hk_button:
     state:
       - styles:
@@ -52,6 +96,8 @@ views:
       - sensor.garage_temperature
       - sensor.energy_daily
       - sensor.energy_monthly
+      - sensor.power_meter
+      - sensor.total_daily_energy
     cards:
       - type: vertical-stack
         cards:
@@ -155,7 +201,7 @@ views:
           - input_datetime.engine_heater
           - input_number.engine_heater
           - input_select.engine_heater
-      - type: 'custom:useful-markdown-card'
+      - type: markdown
         content: >
           ### Monday
 
@@ -185,7 +231,7 @@ views:
 
           [[ food_planning.sunday.state ]]
 
-      - type: 'custom:useful-markdown-card'
+      - type: markdown
         content: >
           [![Emby](/local/icons/emby.png "Emby")](http://homer.lan:8096/web/index.html)
           [![CouchPotato](/local/icons/couchpotato.png "CouchPotato")](http://homer.lan:5050)
@@ -441,6 +487,51 @@ views:
   - title: Monitor
     icon: mdi:wrench
     background: center / cover no-repeat url("/local/background.jpg") fixed
+    popup_cards:
+      switch.engine_heater:
+        title: "Engine Heater"
+        card:
+          type: entities
+          show_header_toggle: false
+          entities:
+            - switch.engine_heater
+            - input_boolean.engine_heater
+            - input_datetime.engine_heater
+            - input_number.engine_heater
+            - input_select.engine_heater
+      switch.downstair_lights:
+        title: Downstairs Lights
+        card:
+          type: vertical-stack
+          cards:
+            - type: custom:button-card
+              color_type: label-card
+              name: Entrance
+            - type: horizontal-stack
+              cards:
+                - type: custom:button-card
+                  entity: switch.entrance_mirror_switch
+                  color_type: card
+                - type: custom:button-card
+                  entity: switch.entrance_unused_switch
+                  color_type: card
+            - type: custom:button-card
+              color_type: label-card
+              name: Living Room
+            - type: horizontal-stack
+              cards:
+                - type: custom:button-card
+                  entity: switch.living_room_balls_switch
+                  color_type: card
+            - type: custom:button-card
+              color_type: label-card
+              name: Dining Room
+            - type: horizontal-stack
+              cards:
+                - type: custom:button-card
+                  entity: switch.dining_room_locker_switch
+                  color_type: card
+
     cards:
       - type: custom:home-card
         theme: two_story_with_garage
@@ -450,10 +541,14 @@ views:
             entity: cover.garage_door
           - type: downstairs_light
             entity: switch.downstair_lights
+            tap_action:
+              action: more-info
           - type: upstairs_light
             entity: switch.upstair_lights
+          - type: door
+            entity: automation.reload_themes
         resources:
-          - entity: sensor.processor_use
+          - entity: sensor.total_daily_energy
       - type: horizontal-stack
         cards:
           - type: gauge
@@ -506,18 +601,18 @@ views:
       - type: glance
         columns: 4
         entities:
-          - device_tracker.broadlink
-          - device_tracker.garage_sensor
-          - device_tracker.ap
-          - device_tracker.apple_tv
-          - device_tracker.printer
-          - device_tracker.receiver
-          - device_tracker.rpi_old
-          - device_tracker.sonos
-          - device_tracker.server
-          - device_tracker.switch_kontor
-          - device_tracker.switch_utsikt
-          - device_tracker.switch_vardagsrum
+          - device_tracker.sys_broadlink
+          - device_tracker.sys_garage_sensor
+          - device_tracker.sys_ap
+          - device_tracker.sys_apple_tv
+          - device_tracker.sys_printer
+          - device_tracker.sys_receiver
+          - device_tracker.sys_rpi_old
+          - device_tracker.sys_sonos
+          - device_tracker.sys_server
+          - device_tracker.sys_switch_kontor
+          - device_tracker.sys_switch_utsikt
+          - device_tracker.sys_switch_vardagsrum
           - device_tracker.kitchen_motion
           - device_tracker.bedroom_motion
       - type: custom:tracker-card
@@ -525,3 +620,932 @@ views:
         trackers:
           - sensor.custom_card_tracker
           - sensor.custom_component_tracker
+
+  - title: Test Page
+    icon: mdi:wrench
+    #background: center / cover no-repeat url("/local/background.jpg") fixed
+    popup_cards:
+      sensor.food_today:
+        title: "Food Menu"
+        card:
+          type: markdown
+          content: >
+            ### Monday
+
+            [[ food_planning.monday.state ]]
+
+            ### Tuesday
+
+            [[ food_planning.tuesday.state ]]
+
+            ### Wednesday
+
+            [[ food_planning.wednesday.state ]]
+
+            ### Thursday
+
+            [[ food_planning.thursday.state ]]
+
+            ### Friday
+
+            [[ food_planning.friday.state ]]
+
+            ### Saturday
+
+            [[ food_planning.saturday.state ]]
+
+            ### Sunday
+
+            [[ food_planning.sunday.state ]]
+      sensor.log_collector:
+        title: System Log
+        card:
+          type: custom:swipe-card
+          start_card: 1
+          parameters:
+            grabCursor: true
+            centeredSlides: false
+            slidesPerView: '1'
+            direction: vertical
+          cards:
+            - type: custom:vertical-stack-in-card
+              cards:
+                - type: custom:button-card
+                  #icon: mdi:nuke
+                  label: Clear System Log
+                  show_label: true
+                  #layout: icon_label
+                  show_icon: false
+                  styles:
+                    card:
+                      - height: 50px
+                  tap_action:
+                    action: call-service
+                    service: system_log.clear
+                    haptic: selection
+                - type: markdown
+                  content: >-
+                    [[ if(sensor.log_collector.attributes.no_events >= 1, '### First', '') ]]
+
+                    [[ if(sensor.log_collector.attributes.no_events >= 1, sensor.log_collector.attributes.first.message, '') ]]
+
+                    [[ if(sensor.log_collector.attributes.no_events >= 2, '### Second', '') ]]
+
+                    [[ if(sensor.log_collector.attributes.no_events >= 2, sensor.log_collector.attributes.second.message, '') ]]
+
+                    [[ if(sensor.log_collector.attributes.no_events >= 3, '### Third', '') ]]
+
+                    [[ if(sensor.log_collector.attributes.no_events >= 3, sensor.log_collector.attributes.third.message, '') ]]
+
+                    [[ if(sensor.log_collector.attributes.no_events >= 4, '### Fourth', '') ]]
+
+                    [[ if(sensor.log_collector.attributes.no_events >= 4, sensor.log_collector.attributes.fourth.message, '') ]]
+
+                    [[ if(sensor.log_collector.attributes.no_events >= 5, '### Fifth', '') ]]
+
+                    [[ if(sensor.log_collector.attributes.no_events >= 5, sensor.log_collector.attributes.fifth.message, '') ]]
+
+    cards:
+      - type: custom:swipe-card
+        card_width: '185px'
+        start_card: 2
+        parameters:
+          #effect: 'coverflow'
+          grabCursor: true
+          centeredSlides: true
+          slidesPerView: '1'
+          coverflowEffect:
+            rotate: 50
+            stretch: 0
+            depth: 100
+            modifier: 1
+            slideShadows : true
+        cards:
+          - type: custom:vertical-stack-in-card
+            cards:
+              - type: markdown
+                content: >-
+                  #### <ha-icon icon="mdi:run-fast"></ha-icon> Shortcuts
+
+              - type: horizontal-stack
+                cards:
+                  - type: custom:button-card
+                    template: shortcut
+                    entity: script.radio
+                    icon: mdi:radio
+                    label_template: >-
+                      return 'Radio';
+
+                  - type: custom:button-card
+                    template: shortcut
+                    entity: switch.start_watering
+                    icon: mdi:water
+                    label_template: >-
+                      if (states['switch.start_watering'].state == 'on') {
+                        return 'Stop watering';
+                      } else {
+                        return 'Start watering';
+                      }
+
+                  - type: custom:button-card
+                    template: shortcut
+                    entity: vacuum.xiaomi_vacuum_cleaner
+                    icon: mdi:robot-vacuum
+                    label_template: >-
+                      if (states['vacuum.xiaomi_vacuum_cleaner'].state == 'cleaning') {
+                        return 'Pause';
+                      } else {
+                        return 'Clean';
+                      }
+                    tap_action:
+                      action: call-service
+                      service: python_script.vacuum_start_pause
+                      service_data:
+                        entity_id: vacuum.xiaomi_vacuum_cleaner
+
+                  - type: custom:button-card
+                    template: shortcut
+                    entity: script.tv_scene
+                    icon: mdi:television-classic
+                    label_template: >-
+                      return 'TV';
+
+              - type: horizontal-stack
+                cards:
+                  - type: custom:button-card
+                    template: shortcut
+                    entity: script.cinema_scene
+                    icon: mdi:projector
+                    label_template: >-
+                      return 'Projector';
+
+                  - type: custom:button-card
+                    template: shortcut
+                    entity: script.off_scene
+                    icon: mdi:weather-night
+                    label_template: >-
+                      return 'All off';
+
+                  - type: custom:button-card
+                    color_type: blank-card
+                  - type: custom:button-card
+                    color_type: blank-card
+
+          - type: custom:home-card
+            theme: two_story_with_garage
+            weather: weather.smhi_home
+            background: paper-card
+            entities:
+              - type: garage
+                entity: cover.garage_door
+              - type: downstairs_light
+                entity: switch.downstair_lights
+              - type: upstairs_light
+                entity: switch.upstair_lights
+              - type: door
+                entity: automation.reload_themes
+              - type: outside_light
+                entity: switch.outside_lights
+              - type: sprinkler
+                entity: binary_sensor.watering_running
+              - type: car
+                entity: binary_sensor.car
+                state_map:
+                  'on': home
+                  'off': not_home
+            resources:
+              - entity: sensor.total_daily_energy
+          - type: custom:vertical-stack-in-card
+            cards:
+              - type: markdown
+                content: >-
+                  #### <ha-icon icon="mdi:home-floor-1"></ha-icon> First Floor
+
+              - type: horizontal-stack
+                cards:
+                  - type: custom:button-card
+                    template: shortcut
+                    entity: switch.entrance_mirror_switch
+                    show_name: true
+                    label_template: >-
+                      return 'Entrance';
+
+                  - type: custom:button-card
+                    template: shortcut
+                    entity: switch.living_room_balls_switch
+                    show_name: true
+                    name_template: >-
+                      return 'Balls';
+                    label_template: >-
+                      return 'Living Room';
+
+                  - type: custom:button-card
+                    template: shortcut
+                    entity: switch.living_room_window
+                    show_name: true
+                    name_template: >-
+                      return 'Window';
+                    label_template: >-
+                      return 'Living Room';
+
+                  - type: custom:button-card
+                    template: shortcut
+                    entity: switch.living_room_stars_switch
+                    show_name: true
+                    name_template: >-
+                      return 'Stars';
+                    label_template: >-
+                      return 'Living Room';
+
+              - type: horizontal-stack
+                cards:
+                  - type: custom:button-card
+                    template: shortcut
+                    entity: switch.christmas_tree
+                    show_name: true
+                    name_template: >-
+                      return 'Christmas Tree';
+                    label_template: >-
+                      return 'Living Room';
+
+                  - type: custom:button-card
+                    template: shortcut
+                    entity: switch.dining_room_locker_switch
+                    show_name: true
+                    name_template: >-
+                      return 'Locker';
+                    label_template: >-
+                      return 'Dining Room';
+
+                  - type: custom:button-card
+                    template: shortcut
+                    entity: switch.dining_room_vase_switch
+                    show_name: true
+                    name_template: >-
+                      return 'Vase';
+                    label_template: >-
+                      return 'Dining Room';
+
+                  - type: custom:button-card
+                    template: shortcut
+                    entity: switch.dining_room_window
+                    show_name: true
+                    name_template: >-
+                      return 'Window';
+                    label_template: >-
+                      return 'Dining Room';
+
+              - type: horizontal-stack
+                cards:
+                  - type: custom:button-card
+                    template: shortcut
+                    entity: switch.kitchen_window
+                    show_name: true
+                    name_template: >-
+                      return 'Window';
+                    label_template: >-
+                      return 'Kitchen';
+
+                  - type: custom:button-card
+                    template: shortcut
+                    entity: switch.office_window
+                    show_name: true
+                    name_template: >-
+                      return 'Window';
+                    label_template: >-
+                      return 'Office';
+
+                  - type: custom:button-card
+                    template: shortcut
+                    entity: switch.office_christmas_tree
+                    show_name: true
+                    name_template: >-
+                      return 'Christmas Tree';
+                    label_template: >-
+                      return 'Office';
+
+                  - type: custom:button-card
+                    template: shortcut
+                    entity: switch.outside_lights
+                    show_name: true
+                    name_template: >-
+                      return 'Lights';
+                    label_template: >-
+                      return 'Outside';
+
+          - type: custom:vertical-stack-in-card
+            cards:
+              - type: markdown
+                content: >-
+                  #### <ha-icon icon="mdi:home-floor-2"></ha-icon> Second Floor
+
+              - type: horizontal-stack
+                cards:
+                  - type: custom:button-card
+                    template: shortcut
+                    entity: switch.pierre_bedroom
+                    show_name: true
+                    name_template: >-
+                      return 'Pierre Lamp';
+                    label_template: >-
+                      return 'Bedroom';
+
+                  - type: custom:button-card
+                    template: shortcut
+                    entity: switch.bedroom_window
+                    show_name: true
+                    name_template: >-
+                      return 'Window';
+                    label_template: >-
+                      return 'Bedroom';
+
+                  - type: custom:button-card
+                    template: shortcut
+                    entity: switch.tims_room
+                    show_name: true
+                    name_template: >-
+                      return 'Window';
+                    label_template: >-
+                      return 'Tims Room';
+
+                  - type: custom:button-card
+                    template: shortcut
+                    entity: switch.guest_room
+                    show_name: true
+                    name_template: >-
+                      return 'Window';
+                    label_template: >-
+                      return 'Guest Room';
+
+      - type: custom:vertical-stack-in-card
+        cards:
+          - type: markdown
+            content: >-
+              #### <ha-icon icon="mdi:calendar-today"></ha-icon> What's up today?
+
+          - type: conditional
+            conditions:
+              - entity: sensor.log_collector
+                state_not: 'none'
+            card:
+              type: custom:button-card
+              template: status_row
+              entity: sensor.log_collector
+              icon: mdi:note-outline
+              label_template: >-
+                return 'There are ' + states['sensor.log_collector'].attributes['actions'].length + ' system events';
+
+          - type: conditional
+            conditions:
+              - entity: sensor.custom_card_tracker
+                state_not: '0'
+            card:
+              type: custom:button-card
+              template: status_row
+              entity: sensor.custom_card_tracker
+              icon: mdi:card-text-outline
+              label_template: >-
+                var s = states['sensor.custom_card_tracker'];
+                return 'Updates to ' + s.state + ' cards available';
+
+          - type: conditional
+            conditions:
+              - entity:  sensor.custom_component_tracker
+                state_not: '0'
+            card:
+              type: custom:button-card
+              template: status_row
+              entity:  sensor.custom_component_tracker
+              icon: mdi:briefcase-download-outline
+              label_template: >-
+                var s = states['sensor.custom_component_tracker'];
+                return 'Updates to ' + s.state + ' components available';
+
+
+          - type: conditional
+            conditions:
+              - entity: sensor.transmission_status
+                state_not: 'idle'
+            card:
+              type: custom:button-card
+              template: status_row
+              entity: sensor.transmission_down_speed
+              icon: mdi:progress-download
+              label_template: >-
+                return 'Downloading ' + states['sensor.transmission_started_torrents'].state + ' torrent(s) at ' + states['sensor.transmission_down_speed'].state + 'MB/s';
+          - type: conditional
+            conditions:
+              - entity: binary_sensor.watering_running
+                state: 'on'
+            card:
+              type: custom:button-card
+              template: status_row
+              entity: switch.start_watering
+              icon: mdi:water
+              label_template: >-
+                return 'Watering plants...';
+
+          - type: conditional
+            conditions:
+              - entity: switch.engine_heater
+                state: 'on'
+            card:
+              type: custom:button-card
+              template: status_row
+              entity: switch.engine_heater
+              icon: mdi:radiator
+              label_template: >-
+                return 'Engine heater set to ' + states['input_datetime.engine_heater'].state;
+
+          - type: custom:button-card
+            template: status_row
+            entity: sensor.food_today
+            icon: mdi:food
+            label_template:
+              return states['sensor.food_today'].state;
+
+          - type: conditional
+            conditions:
+              - entity: vacuum.xiaomi_vacuum_cleaner
+                state: 'cleaning'
+            card:
+              type: custom:button-card
+              template: status_row
+              entity: vacuum.xiaomi_vacuum_cleaner
+              icon: mdi:robot-vacuum
+              label_template: >-
+                var cleaned = states['vacuum.xiaomi_vacuum_cleaner'].attributes.cleaned_area;
+                var total = states['input_number.floor1_vacuum_area'].state;
+                if (total > 0) {
+                  var done = Math.round((cleaned / total) * 100);
+                  if (done > 100) {
+                    done = 100;
+                  }
+                } else {
+                  var done = '???';
+                }
+                return 'Vacuum is cleaning (' + done + '%)';
+
+          - type: conditional
+            conditions:
+              - entity: person.pierre
+                state_not: home
+            card:
+              type: custom:button-card
+              template: status_row
+              entity: person.pierre
+              icon: mdi:human-male
+              label_template: >-
+                var p = states['person.pierre'];
+                var state = p.state.toLowerCase();
+                if (state == 'not_home') {
+                  state = 'unknown place';
+                }
+                return p.attributes.friendly_name + ' is currently at ' + state;
+
+          - type: conditional
+            conditions:
+              - entity: person.tove
+                state_not: home
+            card:
+              type: custom:button-card
+              template: status_row
+              entity: person.tove
+              icon: mdi:human-female
+              label_template: >-
+                var p = states['person.tove'];
+                var state = p.state.toLowerCase();
+                if (state == 'not_home') {
+                  state = 'unknown place';
+                }
+                return p.attributes.friendly_name + ' is currently at ' + state;
+
+      - type: custom:vertical-stack-in-card
+        cards:
+          - type: markdown
+            content: >-
+              #### <ha-icon icon="mdi:thermometer"></ha-icon> Temperatures
+
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                entities:
+                  - entity: sensor.living_room
+                    name: Living Room
+                line_width: 8
+                font_size: 75
+                show:
+                  graph: bar
+                  fill: false
+                  icon: false
+              - type: custom:mini-graph-card
+                entities:
+                  - sensor.bedroom
+                line_width: 8
+                font_size: 75
+                show:
+                  graph: bar
+                  fill: false
+                  icon: false
+
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                entities:
+                  - sensor.outside
+                line_width: 8
+                font_size: 75
+                show:
+                  graph: bar
+                  fill: false
+                  icon: false
+              - type: custom:mini-graph-card
+                entities:
+                  - entity: sensor.garage_temperature
+                    name: Garage
+                line_width: 8
+                font_size: 75
+                show:
+                  graph: bar
+                  fill: false
+                  icon: false
+              - type: custom:mini-graph-card
+                entities:
+                  - sensor.storage
+                line_width: 8
+                font_size: 75
+                show:
+                  graph: bar
+                  fill: false
+                  icon: false
+
+      - type: custom:vertical-stack-in-card
+        cards:
+          - type: markdown
+            content: >-
+              #### <ha-icon icon="mdi:cellphone-link"></ha-icon> Devices
+
+          - type: conditional
+            conditions:
+              - entity: media_player.kok
+                state: playing
+            card:
+              type: custom:mini-media-player
+              entity: media_player.kok
+              name: Sonos
+              power_color: false
+              group: false
+              hide:
+                progress: true
+
+          - type: conditional
+            conditions:
+              - entity: media_player.apple_tv
+                state_not: 'off'
+            card:
+              type: custom:mini-media-player
+              entity: media_player.apple_tv
+              name: Apple TV
+              power_color: false
+              group: false
+              hide:
+                progress: true
+
+          - type: conditional
+            conditions:
+              - entity: media_player.receiver
+                state_not: 'off'
+            card:
+              type: custom:mini-media-player
+              entity: media_player.receiver
+              name: Receiver
+              power_color: false
+              group: false
+              hide:
+                progress: true
+
+          - type: markdown
+            content: >-
+              #### <ha-icon icon="mdi:account"></ha-icon> Offline Nodes and Guests
+
+          - type: custom:monster-card
+            card:
+              type: entities
+              show_header_toggle: false
+            filter:
+              include:
+                - state: not_home
+                  domain: device_tracker
+                  entity_id: 'device_tracker.sys_*'
+                - state: home
+                  domain: device_tracker
+                  entity_id: 'device_tracker.guest_*'
+
+      - type: custom:vertical-stack-in-card
+        cards:
+          - type: markdown
+            content: >-
+              #### <ha-icon icon="mdi:settings"></ha-icon> Preferences
+
+          - type: custom:swipe-card
+            start_card: 1
+            parameters:
+              grabCursor: true
+              centeredSlides: false
+              slidesPerView: 4
+            cards:
+              - type: custom:button-card
+                template: shortcut
+                icon: mdi:eye-off-outline
+                label_template: >-
+                  return 'Hide';
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  service_data:
+                    entity_id: input_select.preference_card
+                    option: 'Hide'
+
+              - type: custom:button-card
+                template: shortcut
+                icon: mdi:link-variant
+                label_template: >-
+                  return 'Links';
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  service_data:
+                    entity_id: input_select.preference_card
+                    option: 'Links'
+
+              - type: custom:button-card
+                template: shortcut
+                icon: mdi:water
+                label_template: >-
+                  return 'Irrigation';
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  service_data:
+                    entity_id: input_select.preference_card
+                    option: 'Irrigation'
+
+              - type: custom:button-card
+                template: shortcut
+                icon: mdi:home-automation
+                label_template: >-
+                  return 'Automations';
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  service_data:
+                    entity_id: input_select.preference_card
+                    option: 'Automations'
+
+              - type: custom:button-card
+                template: shortcut
+                icon: mdi:radiator
+                label_template: >-
+                  return 'Engine Heater';
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  service_data:
+                    entity_id: input_select.preference_card
+                    option: 'Engine Heater'
+
+              - type: custom:button-card
+                template: shortcut
+                icon: mdi:robot-vacuum
+                label_template: >-
+                  return 'Vacuum';
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  service_data:
+                    entity_id: input_select.preference_card
+                    option: 'Vacuum'
+
+              - type: custom:button-card
+                template: shortcut
+                icon: mdi:cellphone-settings-variant
+                label_template: >-
+                  return 'System';
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  service_data:
+                    entity_id: input_select.preference_card
+                    option: 'Management'
+
+          - type: markdown
+            content: " "
+
+          - type: conditional
+            conditions:
+              - entity: input_select.preference_card
+                state: 'Links'
+            card:
+              type: custom:vertical-stack-in-card
+              cards:
+                - type: horizontal-stack
+                  cards:
+                    - type: custom:button-card
+                      size: 60px
+                      entity_picture: /local/links/emby.png
+                      show_entity_picture: true
+                      tap_action:
+                        haptic: selection
+                        action: url
+                        url: http://homer.lan:8096/web/index.html
+                    - type: custom:button-card
+                      size: 60px
+                      entity_picture: /local/links/couchpotato.png
+                      show_entity_picture: true
+                      tap_action:
+                        haptic: selection
+                        action: url
+                        url: http://homer.lan:5050
+                    - type: custom:button-card
+                      size: 60px
+                      entity_picture: /local/links/sonarr.png
+                      show_entity_picture: true
+                      tap_action:
+                        haptic: selection
+                        action: url
+                        url: http://homer.lan:8989
+                    - type: custom:button-card
+                      size: 60px
+                      entity_picture: /local/links/transmission.png
+                      show_entity_picture: true
+                      tap_action:
+                        haptic: selection
+                        action: url
+                        url: http://homer.lan:9091
+
+          - type: conditional
+            conditions:
+              - entity: input_select.preference_card
+                state: 'Irrigation'
+            card:
+              type: custom:vertical-stack-in-card
+              cards:
+                - type: 'custom:button-card'
+                  entity: switch.start_watering
+                  label_template: >-
+                    return (states['switch.start_watering'].state == "on" ?
+                    "Watering..." : "Last watering performed<br><br>" +
+                    states['sensor.watering_last_started'].state);
+                  layout: icon_label
+                  show_label: true
+                  show_name: false
+                  state:
+                    - icon: 'mdi:water'
+                      value: 'on'
+                    - icon: 'mdi:water-off'
+                      value: 'off'
+                - type: glance
+                  show_icon: false
+                  show_name: true
+                  show_state: true
+                  columns: 4
+                  entities:
+                    - entity: switch.zone_1
+                    - entity: switch.zone_2
+                    - entity: switch.zone_3
+                    - entity: switch.zone_4
+                    - entity: sensor.zone_1_runtime
+                      name: Runtime
+                    - entity: sensor.zone_2_runtime
+                      name: Runtime
+                    - entity: sensor.zone_3_runtime
+                      name: Runtime
+                    - entity: sensor.zone_4_runtime
+                      name: Runtime
+                - type: horizontal-stack
+                  cards:
+                    - entity: input_boolean.water_monday
+                      template: hk_button
+                      type: 'custom:button-card'
+                    - entity: input_boolean.water_tuesday
+                      template: hk_button
+                      type: 'custom:button-card'
+                    - entity: input_boolean.water_wednesday
+                      template: hk_button
+                      type: 'custom:button-card'
+                    - entity: input_boolean.water_thursday
+                      template: hk_button
+                      type: 'custom:button-card'
+
+                - type: horizontal-stack
+                  cards:
+                    - entity: input_boolean.water_friday
+                      template: hk_button
+                      type: 'custom:button-card'
+                    - entity: input_boolean.water_saturday
+                      template: hk_button
+                      type: 'custom:button-card'
+                    - entity: input_boolean.water_sunday
+                      template: hk_button
+                      type: 'custom:button-card'
+                    - color_type: blank-card
+                      template: hk_button
+                      type: 'custom:button-card'
+
+                - type: entities
+                  show_header_toggle: false
+                  entities:
+                    - input_datetime.water_time
+                    - entity: input_number.zone1_runtime
+                    - entity: input_number.zone2_runtime
+                    - entity: input_number.zone3_runtime
+                    - entity: input_number.zone4_runtime
+
+          - type: conditional
+            conditions:
+              - entity: input_select.preference_card
+                state: 'Automations'
+            card:
+              type: custom:vertical-stack-in-card
+              cards:
+                - type: entities
+                  entities:
+                    - automation.vacuum_when_nobody_is_home
+                    - automation.evening_lights
+                    - automation.sonos_off_when_nobody_is_home
+                    - automation.sonos_off_when_tim_eats
+
+          - type: conditional
+            conditions:
+              - entity: input_select.preference_card
+                state: 'Engine Heater'
+            card:
+              type: entities
+              show_header_toggle: false
+              entities:
+                - switch.engine_heater
+                - input_boolean.engine_heater
+                - input_datetime.engine_heater
+                - input_number.engine_heater
+                - input_select.engine_heater
+
+          - type: conditional
+            conditions:
+              - entity: input_select.preference_card
+                state: 'Vacuum'
+            card:
+              type: custom:vertical-stack-in-card
+              cards:
+                - type: custom:xiaomi-vacuum-card
+                  entity: vacuum.xiaomi_vacuum_cleaner
+                  name: Xiaomi Vacuum
+                  buttons: true
+                - type: entities
+                  entities:
+                    - input_boolean.has_vacuumed_today
+                    - input_number.floor1_vacuum_area
+
+          - type: conditional
+            conditions:
+              - entity: input_select.preference_card
+                state: 'Management'
+            card:
+              type: custom:vertical-stack-in-card
+              cards:
+                - type: horizontal-stack
+                  cards:
+                    - type: custom:mini-graph-card
+                      entities:
+                        - entity: sensor.processor_use
+                          name: CPU
+                      line_width: 8
+                      font_size: 75
+                      show:
+                        fill: false
+                        icon: false
+                    - type: custom:mini-graph-card
+                      entities:
+                        - entity: sensor.memory_free
+                          name: Memory
+                      line_width: 8
+                      font_size: 75
+                      show:
+                        fill: false
+                        icon: false
+                    - type: custom:mini-graph-card
+                      entities:
+                        - entity: sensor.disk_use_percent
+                          name: Disk Use
+                      line_width: 8
+                      font_size: 75
+                      show:
+                        fill: false
+                        icon: false
+                - type: custom:tracker-card
+                  title:
+                  trackers:
+                    - sensor.custom_card_tracker
+                    - sensor.custom_component_tracker
+
+      - type: markdown
+        content: " "

@@ -50,3 +50,11 @@ automation:
     event_type: folder_watcher
   action:
     service: frontend.reload_themes
+
+binary_sensor:
+  - platform: command_line
+    name: Car
+    device_class: presence
+    command: 'sudo /sbin/iwlist wlan0 scan 2> /dev/null | grep WiFi_OBDII | wc -l'
+    payload_on: 1
+    payload_off: 0

@@ -1,6 +1,7 @@
 TV_ENTITY = 'media_player.tv'
 PROJECTOR_ENTITY = 'switch.projector'
 COVER_ENTITY = 'cover.projector_screen'
+LIGHT_ENTITY = 'group.cinema_lights'
 
 PLAYER = 'media_player.apple_tv'
 REMOTE = 'remote.apple_tv'
@@ -11,6 +12,13 @@ enable_tv = data.get('source', 'tv') == 'tv'
 def call(hass, service, entity_id, **kwargs):
     kwargs['entity_id'] = entity_id
     hass.services.call(entity_id.split('.')[0], service, kwargs, False)
+
+
+# Save previous light state so that it is restored correctly
+light_state = hass.states.get(LIGHT_ENTITY).state
+call(hass,
+     'turn_on' if light_state == 'on' else 'turn_off',
+     'input_boolean.cinema_lights_before_start')
 
 
 # Put receiver in correct state and wake up Apple TV
