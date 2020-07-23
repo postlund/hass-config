@@ -22,7 +22,8 @@ ACTION_BASE_URL = 'http://purenetworks.com/HNAP1/'
 
 def _hmac(key, message):
     return hmac.new(key.encode('utf-8'),
-                    message.encode('utf-8')).hexdigest().upper()
+                    message.encode('utf-8'),
+                    digestmod="MD5").hexdigest().upper()
 
 
 class AuthenticationError(Exception):
